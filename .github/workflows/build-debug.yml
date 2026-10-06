@@ -14,6 +14,14 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Fetch lyrics modules (submodule missing in this repo)
+        run: |
+          rm -rf lyrics
+          git clone --depth 1 --recurse-submodules https://github.com/lyraMusicApp/lyrics.git lyrics
+          rm -rf IconPack
+          git clone --depth 1 https://github.com/lyraMusicApp/IconPack.git IconPack || mkdir -p IconPack
+          ls lyrics
+
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
