@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
@@ -37,7 +38,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -48,6 +48,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import kotlin.random.Random
 
 private fun DrawScope.drawGlyph(
     painter: Painter,
@@ -63,19 +64,31 @@ private fun DrawScope.drawGlyph(
     }
 }
 
-/** Glossy glass bubble drawn behind the glyph (rim, dome sheen, corner highlight, shadow). */
-private fun DrawScope.drawGlassBubble(base: Color) {
+// Colors for the glass bubbles. Each icon picks one and keeps it.
+private val BUBBLE_COLORS = listOf(
+    Color(0xFFE8833A), // orange
+    Color(0xFF7FBF6A), // green
+    Color(0xFF4FA3B8), // teal
+    Color(0xFFE06A7C), // rose
+    Color(0xFF8C7AE0), // violet
+    Color(0xFF4F8DEB), // blue
+    Color(0xFFE5B73B), // amber
+    Color(0xFFD9534F), // red
+    Color(0xFF47B89A), // mint
+)
+
+/** Colored glass bubble drawn behind the glyph (body, dome sheen, rim, corner highlight, shadow). */
+private fun DrawScope.drawGlassBubble(color: Color) {
     val pad = size.minDimension * 0.30f
     val tl = Offset(-pad, -pad)
     val bs = Size(size.width + pad * 2f, size.height + pad * 2f)
     val radius = CornerRadius(bs.minDimension * 0.30f)
-    val isDarkGlyph = base.luminance() < 0.5f
     val d = 1.dp.toPx()
 
-    // soft shadow under the bubble
+    // soft shadow under the bubble, tinted with the bubble color
     for (i in 1..3) {
         drawRoundRect(
-            color = Color.Black.copy(alpha = 0.07f),
+            color = color.copy(alpha = 0.16f),
             topLeft = Offset(tl.x, tl.y + d * i),
             size = bs,
             cornerRadius = radius,
@@ -83,17 +96,17 @@ private fun DrawScope.drawGlassBubble(base: Color) {
     }
     // glass body
     drawRoundRect(
-        color = Color.White.copy(alpha = if (isDarkGlyph) 0.50f else 0.14f),
+        color = color.copy(alpha = 0.88f),
         topLeft = tl,
         size = bs,
         cornerRadius = radius,
     )
-    // dome sheen: bright top, clear middle, slight shade at the bottom
+    // dome sheen: bright top, clear middle, deeper color at the bottom
     drawRoundRect(
         brush = Brush.verticalGradient(
-            0.0f to Color.White.copy(alpha = 0.55f),
-            0.5f to Color.White.copy(alpha = 0.05f),
-            1.0f to base.copy(alpha = 0.12f),
+            0.0f to Color.White.copy(alpha = 0.50f),
+            0.5f to Color.White.copy(alpha = 0.04f),
+            1.0f to Color.Black.copy(alpha = 0.16f),
             startY = tl.y,
             endY = tl.y + bs.height,
         ),
@@ -104,9 +117,9 @@ private fun DrawScope.drawGlassBubble(base: Color) {
     // rim: bright on top, darker at the bottom edge
     drawRoundRect(
         brush = Brush.verticalGradient(
-            0.0f to Color.White.copy(alpha = 0.95f),
-            0.5f to Color.White.copy(alpha = 0.25f),
-            1.0f to base.copy(alpha = 0.25f),
+            0.0f to Color.White.copy(alpha = 0.90f),
+            0.5f to Color.White.copy(alpha = 0.20f),
+            1.0f to Color.Black.copy(alpha = 0.22f),
             startY = tl.y,
             endY = tl.y + bs.height,
         ),
@@ -158,6 +171,7 @@ fun Icon(
     tint: Color = LocalContentColor.current,
 ) {
     val base = if (tint == Color.Unspecified) LocalContentColor.current else tint
+    val bubbleIndex = rememberSaveable { Random.nextInt(BUBBLE_COLORS.size) }
     val density = LocalDensity.current
     val intrinsic = painter.intrinsicSize
     val sizeModifier =
@@ -180,9 +194,9 @@ fun Icon(
             .then(sizeModifier)
             .drawBehind {
                 if (size.minDimension >= 18.dp.toPx() && base.alpha > 0.3f) {
-                    drawGlassBubble(base)
-                    drawGlyph(painter, Color.Black, 0.15f * base.alpha, 0f, 1.dp.toPx())
-                    drawGlyph(painter, base.copy(alpha = 1f), 0.92f * base.alpha)
+                    drawGlassBubble(BUBBLE_COLORS[bubbleIndex])
+                    drawGlyph(painter, Color.Black, 0.18f * base.alpha, 0f, 1.dp.toPx())
+                    drawGlyph(painter, Color.White, base.alpha)
                 } else {
                     drawGlossyGlyph(painter, base)
                 }
