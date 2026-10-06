@@ -1,15 +1,16 @@
 /*
  * Lyra Music Project (2026)
- * Liquid glass icon drop-ins.
+ * Glossy "liquid glass bubble" icons.
  *
  * Icon, FilledIconButton and FilledTonalIconButton in this package mirror the
- * Material3 signatures. Importing these instead of the Material3 ones turns
- * every icon into a translucent glass icon (no gradient) and removes the
- * filled container behind icon buttons (transparent background only).
+ * Material3 signatures. Importing these instead of the Material3 ones gives
+ * every icon a glossy glass layer (rim light, dome sheen, corner highlight,
+ * soft shadow) and removes the filled container behind icon buttons.
  */
 
 package com.shnwaz.lyramusic.ui.component
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButtonColors
@@ -17,35 +18,138 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
 
-// Glossy glass glyph: soft shadow, bright rim, translucent body, top sheen,
-// bottom inner glow and a small specular highlight. Container stays transparent.
+private fun DrawScope.drawGlyph(
+    painter: Painter,
+    color: Color,
+    alpha: Float,
+    dx: Float = 0f,
+    dy: Float = 0f,
+) {
+    translate(left = dx, top = dy) {
+        with(painter) {
+            draw(size = size, alpha = alpha, colorFilter = ColorFilter.tint(color))
+        }
+    }
+}
+
+/** Glossy glass bubble drawn behind the glyph (rim, dome sheen, corner highlight, shadow). */
+private fun DrawScope.drawGlassBubble(base: Color) {
+    val pad = size.minDimension * 0.30f
+    val tl = Offset(-pad, -pad)
+    val bs = Size(size.width + pad * 2f, size.height + pad * 2f)
+    val radius = CornerRadius(bs.minDimension * 0.30f)
+    val isDarkGlyph = base.luminance() < 0.5f
+    val d = 1.dp.toPx()
+
+    // soft shadow under the bubble
+    for (i in 1..3) {
+        drawRoundRect(
+            color = Color.Black.copy(alpha = 0.07f),
+            topLeft = Offset(tl.x, tl.y + d * i),
+            size = bs,
+            cornerRadius = radius,
+        )
+    }
+    // glass body
+    drawRoundRect(
+        color = Color.White.copy(alpha = if (isDarkGlyph) 0.50f else 0.14f),
+        topLeft = tl,
+        size = bs,
+        cornerRadius = radius,
+    )
+    // dome sheen: bright top, clear middle, slight shade at the bottom
+    drawRoundRect(
+        brush = Brush.verticalGradient(
+            0.0f to Color.White.copy(alpha = 0.55f),
+            0.5f to Color.White.copy(alpha = 0.05f),
+            1.0f to base.copy(alpha = 0.12f),
+            startY = tl.y,
+            endY = tl.y + bs.height,
+        ),
+        topLeft = tl,
+        size = bs,
+        cornerRadius = radius,
+    )
+    // rim: bright on top, darker at the bottom edge
+    drawRoundRect(
+        brush = Brush.verticalGradient(
+            0.0f to Color.White.copy(alpha = 0.95f),
+            0.5f to Color.White.copy(alpha = 0.25f),
+            1.0f to base.copy(alpha = 0.25f),
+            startY = tl.y,
+            endY = tl.y + bs.height,
+        ),
+        topLeft = tl,
+        size = bs,
+        cornerRadius = radius,
+        style = Stroke(width = 1.2.dp.toPx()),
+    )
+    // specular highlight, top-right corner
+    rotate(
+        degrees = -25f,
+        pivot = Offset(tl.x + bs.width * 0.75f, tl.y + bs.height * 0.15f),
+    ) {
+        drawOval(
+            color = Color.White.copy(alpha = 0.95f),
+            topLeft = Offset(tl.x + bs.width * 0.62f, tl.y + bs.height * 0.11f),
+            size = Size(bs.width * 0.24f, bs.height * 0.08f),
+        )
+    }
+}
+
+/** Small icons: no bubble, just a glossy glyph. */
+private fun DrawScope.drawGlossyGlyph(painter: Painter, base: Color) {
+    val a = base.alpha
+    val d = 1.dp.toPx()
+    val solid = base.copy(alpha = 1f)
+    drawGlyph(painter, Color.Black, 0.18f * a, 0f, d * 1.2f)
+    drawGlyph(painter, Color.White, 0.75f * a, -0.6f * d, -0.6f * d)
+    drawIntoCanvas { canvas ->
+        canvas.saveLayer(Rect(Offset.Zero, size), Paint())
+        drawGlyph(painter, solid, 0.85f * a)
+        drawRect(
+            brush = Brush.verticalGradient(
+                0.0f to Color.White.copy(alpha = 0.65f),
+                0.5f to Color.White.copy(alpha = 0.05f),
+                1.0f to Color.White.copy(alpha = 0.30f),
+            ),
+            blendMode = BlendMode.SrcAtop,
+        )
+        canvas.restore()
+    }
+}
+
 @Composable
 fun Icon(
     painter: Painter,
@@ -56,11 +160,12 @@ fun Icon(
     val base = if (tint == Color.Unspecified) LocalContentColor.current else tint
     val density = LocalDensity.current
     val intrinsic = painter.intrinsicSize
-    val sizeModifier = if (intrinsic.isSpecified && intrinsic.width.isFinite() && intrinsic.height.isFinite()) {
-        with(density) { Modifier.size(intrinsic.width.toDp(), intrinsic.height.toDp()) }
-    } else {
-        Modifier
-    }
+    val sizeModifier =
+        if (intrinsic.isSpecified && intrinsic.width.isFinite() && intrinsic.height.isFinite()) {
+            with(density) { Modifier.size(intrinsic.width.toDp(), intrinsic.height.toDp()) }
+        } else {
+            Modifier
+        }
     val semanticsModifier = if (contentDescription != null) {
         Modifier.semantics {
             this.contentDescription = contentDescription
@@ -74,61 +179,16 @@ fun Icon(
             .then(semanticsModifier)
             .then(sizeModifier)
             .drawBehind {
-                val a = base.alpha
-                val d = 1.dp.toPx()
-
-                // 1) soft drop shadow (stacked offsets fake a blur)
-                for (i in 1..3) {
-                    translate(left = 0f, top = d * i * 0.9f) {
-                        with(painter) {
-                            draw(
-                                size = size,
-                                alpha = 0.10f * a,
-                                colorFilter = ColorFilter.tint(base.copy(alpha = 1f).darken()),
-                            )
-                        }
-                    }
-                }
-
-                // 2) bright rim catching light on the upper-left edge
-                translate(left = -0.6f * d, top = -0.6f * d) {
-                    with(painter) {
-                        draw(size = size, alpha = 0.75f * a, colorFilter = ColorFilter.tint(Color.White))
-                    }
-                }
-
-                // 3) glass body + sheen, clipped to the glyph with SrcAtop
-                drawIntoCanvas { canvas ->
-                    canvas.saveLayer(Rect(Offset.Zero, size), Paint())
-                    with(painter) {
-                        draw(size = size, alpha = 0.80f * a, colorFilter = ColorFilter.tint(base.copy(alpha = 1f)))
-                    }
-                    // top sheen + bottom inner glow
-                    drawRect(
-                        brush = Brush.verticalGradient(
-                            colorStops = arrayOf(
-                                0.00f to Color.White.copy(alpha = 0.65f),
-                                0.45f to Color.White.copy(alpha = 0.05f),
-                                0.80f to Color.Transparent,
-                                1.00f to Color.White.copy(alpha = 0.35f),
-                            ),
-                        ),
-                        blendMode = BlendMode.SrcAtop,
-                    )
-                    // small specular highlight, top-right
-                    drawOval(
-                        color = Color.White.copy(alpha = 0.95f),
-                        topLeft = Offset(size.width * 0.58f, size.height * 0.08f),
-                        size = Size(size.width * 0.30f, size.height * 0.10f),
-                        blendMode = BlendMode.SrcAtop,
-                    )
-                    canvas.restore()
+                if (size.minDimension >= 18.dp.toPx() && base.alpha > 0.3f) {
+                    drawGlassBubble(base)
+                    drawGlyph(painter, Color.Black, 0.15f * base.alpha, 0f, 1.dp.toPx())
+                    drawGlyph(painter, base.copy(alpha = 1f), 0.92f * base.alpha)
+                } else {
+                    drawGlossyGlyph(painter, base)
                 }
             },
     )
 }
-
-private fun Color.darken(): Color = Color(red * 0.35f, green * 0.35f, blue * 0.35f, 1f)
 
 @Composable
 fun Icon(
