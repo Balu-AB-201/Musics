@@ -86,10 +86,10 @@ private fun DrawScope.drawGlassBubble(color: Color) {
     val d = 1.dp.toPx()
 
     // soft shadow under the bubble, tinted with the bubble color
-    for (i in 1..3) {
+    for (i in 1..4) {
         drawRoundRect(
-            color = color.copy(alpha = 0.16f),
-            topLeft = Offset(tl.x, tl.y + d * i),
+            color = color.copy(alpha = 0.20f),
+            topLeft = Offset(tl.x, tl.y + d * i * 1.1f),
             size = bs,
             cornerRadius = radius,
         )
@@ -113,6 +113,22 @@ private fun DrawScope.drawGlassBubble(color: Color) {
         topLeft = tl,
         size = bs,
         cornerRadius = radius,
+    )
+    // emboss bevel: light edge top-left, shade edge bottom-right, just inside the border
+    val inset = 2.dp.toPx()
+    drawRoundRect(
+        brush = Brush.linearGradient(
+            0.0f to Color.White.copy(alpha = 0.80f),
+            0.45f to Color.White.copy(alpha = 0.0f),
+            0.55f to Color.Black.copy(alpha = 0.0f),
+            1.0f to Color.Black.copy(alpha = 0.35f),
+            start = tl,
+            end = Offset(tl.x + bs.width, tl.y + bs.height),
+        ),
+        topLeft = Offset(tl.x + inset, tl.y + inset),
+        size = Size(bs.width - inset * 2f, bs.height - inset * 2f),
+        cornerRadius = CornerRadius(radius.x - inset),
+        style = Stroke(width = 2.5.dp.toPx()),
     )
     // rim: bright on top, darker at the bottom edge
     drawRoundRect(
@@ -195,7 +211,7 @@ fun Icon(
             .drawBehind {
                 if (size.minDimension >= 18.dp.toPx() && base.alpha > 0.3f) {
                     drawGlassBubble(BUBBLE_COLORS[bubbleIndex])
-                    drawGlyph(painter, Color.Black, 0.18f * base.alpha, 0f, 1.dp.toPx())
+                    drawGlyph(painter, Color.Black, 0.30f * base.alpha, 0f, 1.5.dp.toPx())
                     drawGlyph(painter, Color.White, base.alpha)
                 } else {
                     drawGlossyGlyph(painter, base)
