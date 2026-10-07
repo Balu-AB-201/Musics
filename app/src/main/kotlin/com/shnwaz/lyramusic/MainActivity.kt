@@ -569,7 +569,6 @@ class MainActivity : ComponentActivity() {
             val isSystemInDarkTheme = isSystemInDarkTheme()
             val useDarkTheme =
                 remember(darkTheme, isSystemInDarkTheme, liquidGlassNavBar) {
-                    if (liquidGlassNavBar) return@remember true
                     if (darkTheme == DarkMode.AUTO) isSystemInDarkTheme else darkTheme == DarkMode.ON
                 }
             LaunchedEffect(useDarkTheme) {
