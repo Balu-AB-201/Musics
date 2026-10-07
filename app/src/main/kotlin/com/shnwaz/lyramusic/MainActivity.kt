@@ -211,6 +211,9 @@ import com.shnwaz.lyramusic.ui.component.COLLAPSED_ANCHOR
 import com.shnwaz.lyramusic.ui.component.DISMISSED_ANCHOR
 import com.shnwaz.lyramusic.ui.component.EXPANDED_ANCHOR
 import com.shnwaz.lyramusic.ui.component.FloatingNavigationToolbar
+import com.shnwaz.lyramusic.ui.component.LocalBackdrop
+import com.shnwaz.lyramusic.ui.component.layerBackdrop
+import com.shnwaz.lyramusic.ui.component.rememberGlassBackdrop
 import com.shnwaz.lyramusic.ui.component.IconButton
 import com.shnwaz.lyramusic.ui.component.LocalBottomSheetPageState
 import com.shnwaz.lyramusic.ui.component.LocalMenuState
@@ -1097,7 +1100,10 @@ class MainActivity : ComponentActivity() {
 
 
 
+                    val glassBackdrop = rememberGlassBackdrop()
+
                     CompositionLocalProvider(
+                        LocalBackdrop provides glassBackdrop,
                         LocalDatabase provides database,
                         LocalContentColor provides if (pureBlack) Color.White else contentColorFor(MaterialTheme.colorScheme.surface),
                         LocalPlayerConnection provides playerConnection,
@@ -1632,7 +1638,7 @@ class MainActivity : ComponentActivity() {
                                             fadeOut(tween(200)) + slideOutHorizontally { it / 2 }
                                         }
                                     },
-                                    modifier = Modifier.nestedScroll(
+                                    modifier = Modifier.layerBackdrop(glassBackdrop).nestedScroll(
                                         if (navigationItems.fastAny { it.route == navBackStackEntry?.destination?.route } ||
                                             navBackStackEntry?.destination?.route?.startsWith("search/") == true
                                         ) {
@@ -1821,16 +1827,4 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val ACTION_SEARCH = "com.shnwaz.lyramusic.action.SEARCH"
-        const val ACTION_LIBRARY = "com.shnwaz.lyramusic.action.LIBRARY"
-    }
-}
-
-val LocalDatabase = staticCompositionLocalOf<MusicDatabase> { error("No database provided") }
-val LocalPlayerConnection =
-    staticCompositionLocalOf<PlayerConnection?> { error("No PlayerConnection provided") }
-val LocalPlayerAwareWindowInsets =
-    compositionLocalOf<WindowInsets> { error("No WindowInsets provided") }
-val LocalDownloadUtil = staticCompositionLocalOf<DownloadUtil> { error("No DownloadUtil provided") }
-val LocalSyncUtils = staticCompositionLocalOf<SyncUtils> { error("No SyncUtils provided") }
-val LocalOpenSearch = staticCompositionLocalOf<() -> Unit> { {} }
-val LocalOpenAccountDialog = staticCompositionLocalOf<() -> Unit> { {} }
+        const
