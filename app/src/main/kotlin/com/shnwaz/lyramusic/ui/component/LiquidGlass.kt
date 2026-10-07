@@ -1,14 +1,17 @@
 package com.shnwaz.lyramusic.ui.component
 
 import android.os.Build
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.geometry.Offset
@@ -99,22 +102,59 @@ fun Modifier.phoneXGlass(
         } else {
             drawRect(Color(0xE6121212))
         }
-        // rim light: bright top-left, dark middle, soft bottom-right
-        val outline = shape.createOutline(size, layoutDirection, this)
-        drawOutline(
-            outline = outline,
-            brush = Brush.linearGradient(
-                0.0f to Color.White.copy(alpha = rimAlpha),
-                0.45f to Color.White.copy(alpha = 0.04f),
-                0.55f to Color.White.copy(alpha = 0.04f),
-                1.0f to Color.White.copy(alpha = rimAlpha * 0.55f),
-                start = Offset.Zero,
-                end = Offset(size.width, size.height),
-            ),
-            style = Stroke(width = 2.dp.toPx()),
-        )
+        drawGlassRim(shape, rimAlpha)
     },
 )
+
+/** True when the "Enable Liquid Glass" setting is on. Provided in MainActivity. */
+val LocalLiquidGlassEnabled = staticCompositionLocalOf { false }
+
+/** Rim light: bright top-left, dark middle, soft bottom-right. */
+private fun DrawScope.drawGlassRim(shape: Shape, rimAlpha: Float) {
+    val outline = shape.createOutline(size, layoutDirection, this)
+    drawOutline(
+        outline = outline,
+        brush = Brush.linearGradient(
+            0.0f to Color.White.copy(alpha = rimAlpha),
+            0.45f to Color.White.copy(alpha = 0.04f),
+            0.55f to Color.White.copy(alpha = 0.04f),
+            1.0f to Color.White.copy(alpha = rimAlpha * 0.55f),
+            start = Offset.Zero,
+            end = Offset(size.width, size.height),
+        ),
+        style = Stroke(width = 2.dp.toPx()),
+    )
+}
+
+/**
+ * Frosted glass look WITHOUT live refraction: tint, top sheen and rim light.
+ * Used for controls inside screens (they are part of the recorded backdrop,
+ * so they cannot refract it).
+ */
+fun Modifier.frostedGlass(
+    shape: Shape,
+    tint: Color = Color.White.copy(alpha = 0.10f),
+    rimAlpha: Float = 0.5f,
+): Modifier = this.drawBehind {
+    val outline = shape.createOutline(size, layoutDirection, this)
+    drawOutline(outline = outline, color = tint)
+    drawOutline(
+        outline = outline,
+        brush = Brush.verticalGradient(
+            0.0f to Color.White.copy(alpha = 0.16f),
+            0.5f to Color.Transparent,
+        ),
+    )
+    drawGlassRim(shape, rimAlpha)
+}
+
+/** Glass bubble for buttons. No-op unless Liquid Glass is enabled. */
+@Composable
+fun Modifier.glassBubble(
+    shape: Shape = CircleShape,
+    tint: Color = Color.White.copy(alpha = 0.10f),
+): Modifier =
+    if (LocalLiquidGlassEnabled.current) this.frostedGlass(shape, tint) else this
 
 fun Modifier.drawBackdropCustomShape(
     backdrop: PlatformBackdrop,
