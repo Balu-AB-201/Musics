@@ -87,13 +87,16 @@ fun <E> ChipsRow(
             val isSelected = currentValue == value
             val iconRes = icons[value]
 
+            val glass = LocalLiquidGlassEnabled.current
             val pillContainerColor by androidx.compose.animation.animateColorAsState(
-                targetValue = if (isSelected) Color(0xFFD4E84B) else Color(0xFF1E222A).copy(alpha = 0.85f),
+                targetValue = if (glass) Color.Transparent
+                else if (isSelected) Color(0xFFD4E84B) else Color(0xFF1E222A).copy(alpha = 0.85f),
                 animationSpec = androidx.compose.animation.core.tween(durationMillis = 200),
                 label = "pillBg"
             )
             val pillTextColor by androidx.compose.animation.animateColorAsState(
-                targetValue = if (isSelected) Color(0xFF111827) else Color(0xFFE5E7EB),
+                targetValue = if (glass) MaterialTheme.colorScheme.onSurface
+                else if (isSelected) Color(0xFF111827) else Color(0xFFE5E7EB),
                 animationSpec = androidx.compose.animation.core.tween(durationMillis = 200),
                 label = "pillText"
             )
@@ -112,6 +115,11 @@ fun <E> ChipsRow(
             Box(
                 modifier = Modifier
                     .scale(scale)
+                    .glassBubble(
+                        shape = CircleShape,
+                        tint = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.50f)
+                        else Color.White.copy(alpha = 0.08f),
+                    )
                     .clip(CircleShape)
                     .background(pillContainerColor)
                     .clickable(
@@ -202,8 +210,12 @@ fun <Int> ChoiceChipsRow(
                 },
                 shape = RoundedCornerShape(16.dp),
                 border = null,
+                modifier = Modifier.glassBubble(
+                    shape = RoundedCornerShape(16.dp),
+                    tint = Color.White.copy(alpha = 0.08f),
+                ),
                 colors = AssistChipDefaults.assistChipColors(
-                    containerColor = containerColor,
+                    containerColor = if (LocalLiquidGlassEnabled.current) Color.Transparent else containerColor,
                     labelColor = MaterialTheme.colorScheme.onSurface
                 )
             )
@@ -249,11 +261,18 @@ fun <Int> ChoiceChipsRow(
                 chips.forEach { (value, label) ->
                     Spacer(Modifier.width(8.dp))
 
+                    val glass = LocalLiquidGlassEnabled.current
                     FilterChip(
+                        modifier = Modifier.glassBubble(
+                            shape = RoundedCornerShape(16.dp),
+                            tint = if (currentValue == value) MaterialTheme.colorScheme.primary.copy(alpha = 0.50f)
+                            else Color.White.copy(alpha = 0.08f),
+                        ),
                         label = { Text(label) },
                         selected = currentValue == value,
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = containerColor,
+                            containerColor = if (glass) Color.Transparent else containerColor,
+                            selectedContainerColor = if (glass) Color.Transparent else Color.Unspecified,
                         ),
                         onClick = { onValueUpdate(value) },
                         shape = RoundedCornerShape(16.dp),
