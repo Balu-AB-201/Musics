@@ -187,7 +187,6 @@ fun Icon(
     tint: Color = LocalContentColor.current,
 ) {
     val base = if (tint == Color.Unspecified) LocalContentColor.current else tint
-    val bubbleIndex = rememberSaveable { Random.nextInt(BUBBLE_COLORS.size) }
     val density = LocalDensity.current
     val intrinsic = painter.intrinsicSize
     val sizeModifier =
@@ -209,13 +208,8 @@ fun Icon(
             .then(semanticsModifier)
             .then(sizeModifier)
             .drawBehind {
-                if (size.minDimension >= 18.dp.toPx() && base.alpha > 0.3f) {
-                    drawGlassBubble(BUBBLE_COLORS[bubbleIndex])
-                    drawGlyph(painter, Color.Black, 0.30f * base.alpha, 0f, 1.5.dp.toPx())
-                    drawGlyph(painter, Color.White, base.alpha)
-                } else {
-                    drawGlossyGlyph(painter, base)
-                }
+                // No colored bubble behind the icon any more: just the glossy glyph
+                drawGlossyGlyph(painter, base)
             },
     )
 }
