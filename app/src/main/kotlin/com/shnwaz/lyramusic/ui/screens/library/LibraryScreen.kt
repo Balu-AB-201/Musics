@@ -39,6 +39,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import com.shnwaz.lyramusic.ui.component.Icon
+import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
+import com.shnwaz.lyramusic.ui.component.glassBubble
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -412,9 +414,12 @@ private fun PlaylistTagFilterChip(
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
         label = "PlaylistTagFilterChipScale",
     )
+    val glass = LocalLiquidGlassEnabled.current
     val containerColor by animateColorAsState(
         targetValue =
-            if (selected) {
+            if (glass) {
+                Color.Transparent
+            } else if (selected) {
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
@@ -424,7 +429,9 @@ private fun PlaylistTagFilterChip(
     )
     val contentColor by animateColorAsState(
         targetValue =
-            if (selected) {
+            if (glass) {
+                MaterialTheme.colorScheme.onSurface
+            } else if (selected) {
                 MaterialTheme.colorScheme.onPrimary
             } else {
                 MaterialTheme.colorScheme.onSurfaceVariant
@@ -440,6 +447,11 @@ private fun PlaylistTagFilterChip(
                     scaleX = scale
                     scaleY = scale
                 }.heightIn(min = 48.dp)
+                .glassBubble(
+                    shape = CircleShape,
+                    tint = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.50f)
+                    else Color.White.copy(alpha = 0.08f),
+                )
                 .clip(CircleShape)
                 .background(containerColor)
                 .clickable(
@@ -500,9 +512,12 @@ fun ExpressiveTabChip(
         label = "TabChipScale",
     )
 
+    val glass = LocalLiquidGlassEnabled.current
     val bgColor by animateColorAsState(
         targetValue =
-            if (selected) {
+            if (glass) {
+                Color.Transparent
+            } else if (selected) {
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
@@ -513,7 +528,9 @@ fun ExpressiveTabChip(
 
     val contentColor by animateColorAsState(
         targetValue =
-            if (selected) {
+            if (glass) {
+                MaterialTheme.colorScheme.onSurface
+            } else if (selected) {
                 MaterialTheme.colorScheme.onPrimary
             } else {
                 MaterialTheme.colorScheme.onSurfaceVariant
@@ -528,7 +545,12 @@ fun ExpressiveTabChip(
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
-                }.clip(CircleShape)
+                }.glassBubble(
+                    shape = CircleShape,
+                    tint = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.50f)
+                    else Color.White.copy(alpha = 0.08f),
+                )
+                .clip(CircleShape)
                 .background(bgColor)
                 .clickable(
                     interactionSource = interactionSource,
