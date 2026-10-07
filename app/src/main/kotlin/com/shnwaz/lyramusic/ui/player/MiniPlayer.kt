@@ -32,6 +32,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.shnwaz.lyramusic.ui.component.Icon
+import com.shnwaz.lyramusic.ui.component.LocalBackdrop
+import com.shnwaz.lyramusic.ui.component.phoneXGlass
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -391,15 +393,30 @@ private fun NewMiniPlayer(
             }
         }
 
+    val glassBackdrop = LocalBackdrop.current
+    val useRealGlass =
+        liquidGlass &&
+            glassBackdrop != null &&
+            miniPlayerBackgroundStyle == MiniPlayerBackgroundStyle.THEME
+
     val miniPlayerContainerColor =
         when {
+            useRealGlass -> Color.Transparent
             liquidGlass && pureBlack -> Color.Black.copy(alpha = 0.70f)
             liquidGlass -> MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.78f)
             else -> MaterialTheme.colorScheme.surfaceContainer
         }
 
     val glassModifier =
-        if (liquidGlass) {
+        if (useRealGlass && glassBackdrop != null) {
+            Modifier.phoneXGlass(
+                backdrop = glassBackdrop,
+                shape = miniPlayerShape,
+                tint =
+                    if (pureBlack) Color.Black.copy(alpha = 0.30f)
+                    else MaterialTheme.colorScheme.surface.copy(alpha = 0.25f),
+            )
+        } else if (liquidGlass) {
             Modifier
                 .border(
                     width = 0.8.dp,
