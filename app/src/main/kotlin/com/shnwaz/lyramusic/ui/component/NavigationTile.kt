@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -52,8 +53,15 @@ fun NavigationTile(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(56.dp)
+                .glassBubble(CircleShape, Color.White.copy(alpha = 0.08f))
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainer),
+                .background(
+                    if (LocalLiquidGlassEnabled.current) {
+                        Color.Transparent
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainer
+                    },
+                ),
         ) {
             Icon(
                 painter = painterResource(icon),
