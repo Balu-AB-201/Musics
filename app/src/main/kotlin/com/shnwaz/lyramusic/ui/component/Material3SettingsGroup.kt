@@ -20,6 +20,7 @@ import com.shnwaz.lyramusic.ui.component.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
@@ -53,10 +54,18 @@ fun Material3SettingsGroup(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .animateContentSize(),
+                .animateContentSize()
+                .glassBubble(
+                    shape = RoundedCornerShape(24.dp),
+                    tint = Color.White.copy(alpha = 0.07f),
+                ),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                containerColor = if (LocalLiquidGlassEnabled.current) {
+                    Color.Transparent
+                } else {
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                }
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
@@ -97,11 +106,19 @@ private fun Material3SettingsItemRow(
                 Box(
                     modifier = Modifier
                         .size(40.dp)
+                        .glassBubble(
+                            shape = RoundedCornerShape(12.dp),
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.30f),
+                        )
                         .clip(RoundedCornerShape(12.dp))
                         .background(
-                            MaterialTheme.colorScheme.primary.copy(
-                                alpha = if (item.isHighlighted) 0.15f else 0.1f
-                            )
+                            if (LocalLiquidGlassEnabled.current) {
+                                Color.Transparent
+                            } else {
+                                MaterialTheme.colorScheme.primary.copy(
+                                    alpha = if (item.isHighlighted) 0.15f else 0.1f
+                                )
+                            }
                         ),
                     contentAlignment = Alignment.Center
                 ) {
