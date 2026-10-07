@@ -186,13 +186,18 @@ private fun FloatingToolbarOverflowAction(
     Box {
         Surface(
             onClick = { fabMenuExpanded = !fabMenuExpanded },
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier
+                .size(48.dp)
+                .toolbarGlass(
+                    liquidGlass = liquidGlass,
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.50f),
+                ),
             shape = CircleShape,
-            color = floatingToolbarFabContainerColor(
+            color = if (glassActive(liquidGlass)) Color.Transparent else floatingToolbarFabContainerColor(
                 pureBlack = pureBlack,
                 liquidGlass = liquidGlass
             ),
-            contentColor = floatingToolbarFabContentColor(
+            contentColor = if (glassActive(liquidGlass)) Color.White else floatingToolbarFabContentColor(
                 pureBlack = pureBlack,
                 liquidGlass = liquidGlass
             ),
@@ -299,10 +304,15 @@ private fun FloatingToolbarFabAction(
 
     Surface(
         onClick = onClick,
-        modifier = Modifier.size(48.dp),
+        modifier = Modifier
+            .size(48.dp)
+            .toolbarGlass(
+                liquidGlass = liquidGlass,
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.50f),
+            ),
         shape = CircleShape,
-        color = floatingToolbarFabContainerColor(pureBlack = pureBlack, liquidGlass = liquidGlass),
-        contentColor = floatingToolbarFabContentColor(pureBlack = pureBlack, liquidGlass = liquidGlass),
+        color = if (glassActive(liquidGlass)) Color.Transparent else floatingToolbarFabContainerColor(pureBlack = pureBlack, liquidGlass = liquidGlass),
+        contentColor = if (glassActive(liquidGlass)) Color.White else floatingToolbarFabContentColor(pureBlack = pureBlack, liquidGlass = liquidGlass),
         shadowElevation = 0.dp,
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -328,9 +338,11 @@ private fun FloatingNavigationToolbarItem(
     onClick: () -> Unit,
 ) {
     val shape = CircleShape
+    val useGlassStyle = glassActive(liquidGlass)
     val containerColor by animateColorAsState(
         targetValue =
             when {
+                selected && useGlassStyle -> Color.Transparent
                 selected -> MaterialTheme.colorScheme.primary
                 else -> Color.Transparent
             },
@@ -339,11 +351,21 @@ private fun FloatingNavigationToolbarItem(
     val contentColor by animateColorAsState(
         targetValue =
             when {
+                selected && useGlassStyle -> Color.White
                 selected -> MaterialTheme.colorScheme.onPrimary
                 else -> Color.White.copy(alpha = 0.82f)
             },
         label = "tabContent",
     )
+    val selectedGlass =
+        if (selected) {
+            Modifier.toolbarGlass(
+                liquidGlass = liquidGlass,
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.50f),
+            )
+        } else {
+            Modifier
+        }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
@@ -361,6 +383,7 @@ private fun FloatingNavigationToolbarItem(
             Modifier
                 .scale(scale)
                 .size(48.dp)
+                .then(selectedGlass)
                 .clip(CircleShape)
                 .background(color = containerColor, shape = CircleShape)
                 .clickable(
@@ -377,6 +400,30 @@ private fun FloatingNavigationToolbarItem(
             tint = contentColor,
             modifier = Modifier.size(24.dp)
         )
+    }
+}
+
+// ── Real glass helpers (bottom bar sits outside the recorded backdrop) ──────
+
+@Composable
+private fun glassActive(liquidGlass: Boolean): Boolean =
+    liquidGlass && LocalBackdrop.current != null
+
+@Composable
+private fun Modifier.toolbarGlass(liquidGlass: Boolean, tint: Color): Modifier {
+    val backdrop = LocalBackdrop.current
+    return if (liquidGlass && backdrop != null) {
+        this.phoneXGlass(
+            backdrop = backdrop,
+            shape = CircleShape,
+            tint = tint,
+            blurRadius = 2.dp,
+            refractionHeight = 12.dp,
+            refractionAmount = 24.dp,
+            rimAlpha = 0.7f,
+        )
+    } else {
+        this
     }
 }
 
