@@ -21,6 +21,9 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.Color
 import com.shnwaz.lyramusic.ui.component.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -49,15 +52,7 @@ fun BoxScope.HideOnScrollFAB(
                     .only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal),
             ),
     ) {
-        FloatingActionButton(
-            modifier = Modifier.padding(16.dp),
-            onClick = onClick,
-        ) {
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = null,
-            )
-        }
+        GlassAwareFab(onClick = onClick, icon = icon)
     }
 }
 
@@ -80,15 +75,7 @@ fun BoxScope.HideOnScrollFAB(
                     .only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal),
             ),
     ) {
-        FloatingActionButton(
-            modifier = Modifier.padding(16.dp),
-            onClick = onClick,
-        ) {
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = null,
-            )
-        }
+        GlassAwareFab(onClick = onClick, icon = icon)
     }
 }
 
@@ -111,14 +98,35 @@ fun BoxScope.HideOnScrollFAB(
                     .only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal),
             ),
     ) {
-        FloatingActionButton(
-            modifier = Modifier.padding(16.dp),
-            onClick = onClick,
-        ) {
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = null,
-            )
-        }
+        GlassAwareFab(onClick = onClick, icon = icon)
+    }
+}
+
+@Composable
+private fun GlassAwareFab(
+    onClick: () -> Unit,
+    @DrawableRes icon: Int,
+) {
+    val glass = LocalLiquidGlassEnabled.current
+    FloatingActionButton(
+        modifier = Modifier
+            .padding(16.dp)
+            .glassBubble(
+                shape = FloatingActionButtonDefaults.shape,
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
+            ),
+        onClick = onClick,
+        containerColor = if (glass) Color.Transparent else FloatingActionButtonDefaults.containerColor,
+        contentColor = if (glass) Color.White else MaterialTheme.colorScheme.onPrimaryContainer,
+        elevation = if (glass) {
+            FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)
+        } else {
+            FloatingActionButtonDefaults.elevation()
+        },
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+        )
     }
 }
