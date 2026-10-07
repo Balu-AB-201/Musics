@@ -1827,4 +1827,16 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val ACTION_SEARCH = "com.shnwaz.lyramusic.action.SEARCH"
-        const
+        const val ACTION_LIBRARY = "com.shnwaz.lyramusic.action.LIBRARY"
+    }
+}
+
+val LocalDatabase = staticCompositionLocalOf<MusicDatabase> { error("No database provided") }
+val LocalPlayerConnection =
+    staticCompositionLocalOf<PlayerConnection?> { error("No PlayerConnection provided") }
+val LocalPlayerAwareWindowInsets =
+    compositionLocalOf<WindowInsets> { error("No WindowInsets provided") }
+val LocalDownloadUtil = staticCompositionLocalOf<DownloadUtil> { error("No DownloadUtil provided") }
+val LocalSyncUtils = staticCompositionLocalOf<SyncUtils> { error("No SyncUtils provided") }
+val LocalOpenSearch = staticCompositionLocalOf<() -> Unit> { {} }
+val LocalOpenAccountDialog = staticCompositionLocalOf<() -> Unit> { {} }
