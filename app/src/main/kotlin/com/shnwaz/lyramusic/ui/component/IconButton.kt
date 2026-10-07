@@ -78,6 +78,7 @@ fun IconButton(
         modifier = modifier
             .minimumInteractiveComponentSize()
             .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+            .glassBubble(CircleShape)
             .clip(CircleShape)
             .background(color = colors.containerColor)
             .combinedClickable(
