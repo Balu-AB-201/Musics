@@ -117,7 +117,7 @@ private fun GlassAwareFab(
             ),
         onClick = onClick,
         containerColor = if (glass) Color.Transparent else FloatingActionButtonDefaults.containerColor,
-        contentColor = if (glass) Color.White else MaterialTheme.colorScheme.onPrimaryContainer,
+        contentColor = if (glass) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onPrimaryContainer,
         elevation = if (glass) {
             FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)
         } else {
