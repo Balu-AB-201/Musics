@@ -97,7 +97,25 @@ fun FloatingNavigationToolbar(
     ) {
         val showSelectedLabels = maxWidth >= 360.dp
 
+        val glassBackdrop = LocalBackdrop.current
+        val glassTint =
+            if (pureBlack) Color.Black.copy(alpha = 0.30f)
+            else MaterialTheme.colorScheme.surface.copy(alpha = 0.25f)
+        val glassModifier =
+            if (liquidGlass && glassBackdrop != null) {
+                Modifier
+                    .phoneXGlass(
+                        backdrop = glassBackdrop,
+                        shape = CircleShape,
+                        tint = glassTint,
+                    )
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
+            } else {
+                Modifier
+            }
+
         Row(
+            modifier = glassModifier,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
