@@ -212,6 +212,7 @@ import com.shnwaz.lyramusic.ui.component.DISMISSED_ANCHOR
 import com.shnwaz.lyramusic.ui.component.EXPANDED_ANCHOR
 import com.shnwaz.lyramusic.ui.component.FloatingNavigationToolbar
 import com.shnwaz.lyramusic.ui.component.LocalBackdrop
+import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
 import com.shnwaz.lyramusic.ui.component.layerBackdrop
 import com.shnwaz.lyramusic.ui.component.rememberGlassBackdrop
 import com.shnwaz.lyramusic.ui.component.IconButton
@@ -1104,6 +1105,7 @@ class MainActivity : ComponentActivity() {
 
                     CompositionLocalProvider(
                         LocalBackdrop provides glassBackdrop,
+                        LocalLiquidGlassEnabled provides liquidGlassNavBar,
                         LocalDatabase provides database,
                         LocalContentColor provides if (pureBlack) Color.White else contentColorFor(MaterialTheme.colorScheme.surface),
                         LocalPlayerConnection provides playerConnection,
