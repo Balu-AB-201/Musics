@@ -197,7 +197,7 @@ private fun FloatingToolbarOverflowAction(
                 pureBlack = pureBlack,
                 liquidGlass = liquidGlass
             ),
-            contentColor = if (glassActive(liquidGlass)) Color.White else floatingToolbarFabContentColor(
+            contentColor = if (glassActive(liquidGlass)) MaterialTheme.colorScheme.onSurface else floatingToolbarFabContentColor(
                 pureBlack = pureBlack,
                 liquidGlass = liquidGlass
             ),
@@ -312,7 +312,7 @@ private fun FloatingToolbarFabAction(
             ),
         shape = CircleShape,
         color = if (glassActive(liquidGlass)) Color.Transparent else floatingToolbarFabContainerColor(pureBlack = pureBlack, liquidGlass = liquidGlass),
-        contentColor = if (glassActive(liquidGlass)) Color.White else floatingToolbarFabContentColor(pureBlack = pureBlack, liquidGlass = liquidGlass),
+        contentColor = if (glassActive(liquidGlass)) MaterialTheme.colorScheme.onSurface else floatingToolbarFabContentColor(pureBlack = pureBlack, liquidGlass = liquidGlass),
         shadowElevation = 0.dp,
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -351,9 +351,9 @@ private fun FloatingNavigationToolbarItem(
     val contentColor by animateColorAsState(
         targetValue =
             when {
-                selected && useGlassStyle -> Color.White
+                selected && useGlassStyle -> MaterialTheme.colorScheme.onSurface
                 selected -> MaterialTheme.colorScheme.onPrimary
-                else -> Color.White.copy(alpha = 0.82f)
+                else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.82f)
             },
         label = "tabContent",
     )
