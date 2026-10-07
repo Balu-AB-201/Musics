@@ -249,6 +249,10 @@ fun Icon(
     )
 }
 
+private fun IconButtonColors.glassTint(): Color =
+    if (containerColor.alpha > 0.01f) containerColor.copy(alpha = 0.45f)
+    else Color.White.copy(alpha = 0.10f)
+
 private fun IconButtonColors.clear(): IconButtonColors = copy(
     containerColor = Color.Transparent,
     disabledContainerColor = Color.Transparent,
@@ -265,7 +269,7 @@ fun FilledIconButton(
     content: @Composable () -> Unit,
 ) = androidx.compose.material3.FilledIconButton(
     onClick = onClick,
-    modifier = modifier,
+    modifier = modifier.glassBubble(shape, colors.glassTint()),
     enabled = enabled,
     shape = shape,
     colors = colors.clear(),
@@ -284,7 +288,7 @@ fun FilledTonalIconButton(
     content: @Composable () -> Unit,
 ) = androidx.compose.material3.FilledTonalIconButton(
     onClick = onClick,
-    modifier = modifier,
+    modifier = modifier.glassBubble(shape, colors.glassTint()),
     enabled = enabled,
     shape = shape,
     colors = colors.clear(),
