@@ -54,6 +54,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
@@ -111,8 +112,18 @@ fun PreferenceEntry(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .size(36.dp)
+                        .glassBubble(
+                            shape = RoundedCornerShape(12.dp),
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.30f),
+                        )
                         .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
+                        .background(
+                            if (LocalLiquidGlassEnabled.current) {
+                                Color.Transparent
+                            } else {
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                            },
+                        ),
                     contentAlignment = Alignment.Center,
                 ) {
                     icon()
@@ -153,13 +164,21 @@ fun PreferenceEntry(
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                containerColor = if (LocalLiquidGlassEnabled.current) {
+                    Color.Transparent
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerLow
+                },
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 3.dp)
-                .graphicsLayer { scaleX = scale; scaleY = scale },
+                .graphicsLayer { scaleX = scale; scaleY = scale }
+                .glassBubble(
+                    shape = RoundedCornerShape(16.dp),
+                    tint = Color.White.copy(alpha = 0.07f),
+                ),
         ) {
             rowContent()
         }
@@ -592,10 +611,19 @@ fun PreferenceGroup(
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                containerColor = if (LocalLiquidGlassEnabled.current) {
+                    Color.Transparent
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerLow
+                },
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .glassBubble(
+                    shape = RoundedCornerShape(16.dp),
+                    tint = Color.White.copy(alpha = 0.07f),
+                ),
         ) {
             CompositionLocalProvider(LocalPreferenceInGroup provides true) {
                 Column(content = content)
