@@ -79,7 +79,7 @@ fun BottomSheetMenu(
                 state.isVisible = false
             },
             containerColor = if (glass) Color.Transparent else background,
-            scrimColor = if (glass) Color.Black.copy(alpha = 0.25f) else BottomSheetDefaults.ScrimColor,
+            scrimColor = if (glass) Color.Black.copy(alpha = 0.10f) else BottomSheetDefaults.ScrimColor,
             contentColor = MaterialTheme.colorScheme.onSurface,
             dragHandle = {
                 Box(
@@ -94,7 +94,7 @@ fun BottomSheetMenu(
                 .fillMaxHeight()
                 .glassBubble(
                     shape = BottomSheetDefaults.ExpandedShape,
-                    tint = MaterialTheme.colorScheme.surface.copy(alpha = 0.50f),
+                    tint = MaterialTheme.colorScheme.surface.copy(alpha = 0.18f),
                 )
         ) {
             // Real blur of the app behind the sheet (Android 12+, if the device allows it)
