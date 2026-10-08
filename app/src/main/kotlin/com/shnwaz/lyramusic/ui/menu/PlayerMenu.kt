@@ -1066,6 +1066,11 @@ fun TempoPitchDialog(onDismiss: () -> Unit) {
                     presets.forEach { preset ->
                         val selected = abs(tempo - preset) < 0.005f
                         FilterChip(
+                            modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
+                            colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                                containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                                selectedContainerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                            ),
                             selected = selected,
                             onClick = {
                                 tempo = preset
@@ -1118,11 +1123,21 @@ fun TempoPitchDialog(onDismiss: () -> Unit) {
                         .horizontalScroll(rememberScrollState()),
                 ) {
                     FilterChip(
+                        modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
+                        colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                            containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                            selectedContainerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                        ),
                         selected = pitchMode == PitchMode.Semitones,
                         onClick = { pitchMode = PitchMode.Semitones },
                         label = { Text(stringResource(R.string.pitch_mode_semitones_short)) },
                     )
                     FilterChip(
+                        modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
+                        colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                            containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                            selectedContainerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                        ),
                         selected = pitchMode == PitchMode.Multiplier,
                         onClick = { pitchMode = PitchMode.Multiplier },
                         label = { Text(stringResource(R.string.pitch_mode_multiplier_short)) },
@@ -1159,6 +1174,11 @@ fun TempoPitchDialog(onDismiss: () -> Unit) {
                             presets.forEach { preset ->
                                 val selected = currentSemitones == preset
                                 FilterChip(
+                                    modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
+                                    colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                                        containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                                        selectedContainerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                                    ),
                                     selected = selected,
                                     onClick = {
                                         pitch = semitonesToPitch(preset)
@@ -1228,6 +1248,11 @@ fun TempoPitchDialog(onDismiss: () -> Unit) {
                             presets.forEach { preset ->
                                 val selected = abs(pitch - preset) < 0.005f
                                 FilterChip(
+                                    modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
+                                    colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                                        containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                                        selectedContainerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                                    ),
                                     selected = selected,
                                     onClick = {
                                         pitch = preset
@@ -1629,6 +1654,7 @@ fun EqualizerDialog(
                                     .horizontalScroll(rememberScrollState()),
                         ) {
                             FilterChip(
+                                modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                                 selected = selectedProfileId == "flat",
                                 onClick = {
                                     playerConnection.service.applyEqFlatPreset()
@@ -1637,7 +1663,8 @@ fun EqualizerDialog(
                                 label = { Text(text = stringResource(R.string.eq_flat)) },
                                 colors =
                                     FilterChipDefaults.filterChipColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    selectedContainerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                                        containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh,
                                     ),
                                 border = null,
                             )
@@ -1646,6 +1673,7 @@ fun EqualizerDialog(
 
                             caps.systemPresets.forEachIndexed { index, name ->
                                 FilterChip(
+                                    modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                                     selected = selectedProfileId == "system:$index",
                                     onClick = {
                                         playerConnection.service.applySystemEqPreset(index)
@@ -1660,7 +1688,8 @@ fun EqualizerDialog(
                                     },
                                     colors =
                                         FilterChipDefaults.filterChipColors(
-                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        selectedContainerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                                            containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh,
                                         ),
                                     border = null,
                                 )
