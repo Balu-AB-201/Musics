@@ -102,12 +102,15 @@ fun TagChip(
 
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = animatedBackgroundColor,
+        color = if (LocalLiquidGlassEnabled.current) Color.Transparent else animatedBackgroundColor,
         border = BorderStroke(
             width = if (selected) 2.5.dp else 1.5.dp,
             color = contentColor
         ),
-        modifier = modifier
+        modifier = modifier.glassBubble(
+            shape = RoundedCornerShape(20.dp),
+            tint = contentColor.copy(alpha = if (selected) 0.40f else 0.18f),
+        )
     ) {
         Row(
             modifier = Modifier
