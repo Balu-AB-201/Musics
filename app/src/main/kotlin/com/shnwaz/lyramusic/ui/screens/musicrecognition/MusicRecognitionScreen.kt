@@ -75,6 +75,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.shnwaz.lyramusic.ui.component.glassBubble
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
@@ -1132,6 +1133,7 @@ private fun FlowChips(
     ) {
         items.forEach { chip ->
             AssistChip(
+                modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                 onClick = {},
                 label = {
                     Text(
@@ -1150,7 +1152,7 @@ private fun FlowChips(
                 },
                 colors =
                     AssistChipDefaults.assistChipColors(
-                        containerColor = containerColor,
+                        containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else containerColor,
                         labelColor = labelColor,
                         leadingIconContentColor = labelColor,
                     ),
