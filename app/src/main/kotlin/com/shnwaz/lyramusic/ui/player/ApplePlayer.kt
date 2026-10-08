@@ -97,7 +97,8 @@ fun ApplePlayer(
     onRepeatClick: () -> Unit = {},
     onOpenFullscreenLyrics: () -> Unit = {},
 ) {
-    val sliderStyle by rememberEnumPreference(SliderStyleKey, SliderStyle.Wavy)
+    val savedSliderStyle by rememberEnumPreference(SliderStyleKey, SliderStyle.Simple)
+    val sliderStyle = if (savedSliderStyle == SliderStyle.Thick) SliderStyle.Thick else SliderStyle.Simple
 
     Box(modifier = Modifier.fillMaxSize().bottomSheetDraggable(state)
     ) {
