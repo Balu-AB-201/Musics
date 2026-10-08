@@ -210,6 +210,7 @@ fun ThumbnailCornerRadiusModal(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         FilterChip(
+                            modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                             selected = isCustomSelected,
                             onClick = {
                                 isCustomSelected = true
@@ -224,7 +225,8 @@ fun ThumbnailCornerRadiusModal(
                                 )
                             },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                                selectedContainerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.primaryContainer,
                                 selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         )
@@ -402,6 +404,7 @@ private fun ChipsGrid(
             ) {
                 rowValues.forEachIndexed { index, value ->
                     FilterChip(
+                        modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                         selected = selectedValue == value,
                         onClick = { onValueSelected(value) },
                         label = {
@@ -411,7 +414,8 @@ private fun ChipsGrid(
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else androidx.compose.ui.graphics.Color.Unspecified,
+                            selectedContainerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.primaryContainer,
                             selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     )
