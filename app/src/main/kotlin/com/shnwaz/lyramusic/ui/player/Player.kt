@@ -184,10 +184,8 @@ fun BottomSheetPlayer(
 
     val playerConnection = LocalPlayerConnection.current ?: return
 
-    val playerDesignStyle by rememberEnumPreference(
-        key = PlayerDesignStyleKey,
-        defaultValue = PlayerDesignStyle.V4
-    )
+    // Only the Immersive design (V7) is kept
+    val playerDesignStyle = PlayerDesignStyle.V7
 
     val playerBackground by rememberEnumPreference(
         key = PlayerBackgroundStyleKey,
@@ -256,7 +254,9 @@ fun BottomSheetPlayer(
     val canSkipPrevious by playerConnection.canSkipPrevious.collectAsState()
     val canSkipNext by playerConnection.canSkipNext.collectAsState()
 
-    val sliderStyle by rememberEnumPreference(SliderStyleKey, SliderStyle.Standard)
+    val savedSliderStyle by rememberEnumPreference(SliderStyleKey, SliderStyle.Simple)
+    // Only Simple and Thick sliders are kept
+    val sliderStyle = if (savedSliderStyle == SliderStyle.Thick) SliderStyle.Thick else SliderStyle.Simple
 
     var position by rememberSaveable(mediaMetadata?.id) {
         mutableLongStateOf(playerConnection.player.currentPosition)
