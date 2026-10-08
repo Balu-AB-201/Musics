@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -134,17 +135,23 @@ private fun DrawScope.drawGlassRim(shape: Shape, rimAlpha: Float) {
 fun Modifier.frostedGlass(
     shape: Shape,
     tint: Color = Color.White.copy(alpha = 0.10f),
-    rimAlpha: Float = 0.5f,
+    rimAlpha: Float = 0.80f,
 ): Modifier = this.drawBehind {
     val outline = shape.createOutline(size, layoutDirection, this)
+    // 1. milky base + caller tint (same idea as the mini player surface)
+    drawOutline(outline = outline, color = Color.White.copy(alpha = 0.07f))
     drawOutline(outline = outline, color = tint)
+    // 2. glass thickness: bright top sheen, soft glow at the bottom edge
     drawOutline(
         outline = outline,
         brush = Brush.verticalGradient(
-            0.0f to Color.White.copy(alpha = 0.16f),
-            0.5f to Color.Transparent,
+            0.00f to Color.White.copy(alpha = 0.26f),
+            0.35f to Color.White.copy(alpha = 0.04f),
+            0.75f to Color.Transparent,
+            1.00f to Color.White.copy(alpha = 0.14f),
         ),
     )
+    // 3. diagonal rim light, same as the mini player
     drawGlassRim(shape, rimAlpha)
 }
 
@@ -155,6 +162,31 @@ fun Modifier.glassBubble(
     tint: Color = Color.White.copy(alpha = 0.10f),
 ): Modifier =
     if (LocalLiquidGlassEnabled.current) this.frostedGlass(shape, tint) else this
+
+/**
+ * Glass layer drawn on top of album art: bright top sheen, soft bottom glow
+ * and a rim light. No-op unless Liquid Glass is enabled.
+ */
+@Composable
+fun Modifier.glassOverlay(shape: Shape): Modifier =
+    if (LocalLiquidGlassEnabled.current) {
+        this.drawWithContent {
+            drawContent()
+            val outline = shape.createOutline(size, layoutDirection, this)
+            drawOutline(
+                outline = outline,
+                brush = Brush.verticalGradient(
+                    0.00f to Color.White.copy(alpha = 0.30f),
+                    0.30f to Color.White.copy(alpha = 0.06f),
+                    0.65f to Color.Transparent,
+                    1.00f to Color.White.copy(alpha = 0.14f),
+                ),
+            )
+            drawGlassRim(shape, 0.80f)
+        }
+    } else {
+        this
+    }
 
 fun Modifier.drawBackdropCustomShape(
     backdrop: PlatformBackdrop,
