@@ -61,6 +61,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.shnwaz.lyramusic.ui.component.glassBubble
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -338,6 +339,7 @@ fun PoTokenScreen(
                 ) {
                     SUPPORTED_CLIENTS.forEach { client ->
                         AssistChip(
+                            modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                             onClick = {},
                             label = {
                                 Text(
@@ -346,7 +348,7 @@ fun PoTokenScreen(
                                 )
                             },
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.secondaryContainer,
                                 labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
                             ),
                         )
