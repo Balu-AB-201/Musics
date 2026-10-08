@@ -50,6 +50,7 @@ import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import com.shnwaz.lyramusic.ui.component.FilledIconButton
+import com.shnwaz.lyramusic.ui.component.glassBubble
 import com.shnwaz.lyramusic.ui.component.FilledTonalIconButton
 import com.shnwaz.lyramusic.ui.component.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -629,6 +630,11 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .glassBubble(
+                            shape = CircleShape,
+                            tint = if (currentSongLiked) MaterialTheme.colorScheme.error.copy(alpha = 0.30f)
+                            else Color.White.copy(alpha = 0.08f),
+                        )
                         .clip(CircleShape)
                         .background(
                             if (currentSongLiked) textBackgroundColor.copy(alpha = 0.2f)
@@ -651,6 +657,7 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .glassBubble(CircleShape, Color.White.copy(alpha = 0.08f))
                         .clip(CircleShape)
                         .clickable {
                             menuState.show {
@@ -1599,7 +1606,9 @@ fun PlayerPlaybackControls(
                     enabled = canSkipPrevious,
                     shape = CircleShape,
                     color = Color.Transparent,
-                    modifier = Modifier.size(64.dp)
+                    modifier = Modifier
+                        .size(64.dp)
+                        .glassBubble(CircleShape, Color.White.copy(alpha = 0.08f))
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -1627,7 +1636,9 @@ fun PlayerPlaybackControls(
                     },
                     shape = CircleShape,
                     color = Color.Transparent,
-                    modifier = Modifier.size(72.dp)
+                    modifier = Modifier
+                        .size(72.dp)
+                        .glassBubble(CircleShape, Color.White.copy(alpha = 0.16f))
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -1660,7 +1671,9 @@ fun PlayerPlaybackControls(
                     enabled = canSkipNext,
                     shape = CircleShape,
                     color = Color.Transparent,
-                    modifier = Modifier.size(64.dp)
+                    modifier = Modifier
+                        .size(64.dp)
+                        .glassBubble(CircleShape, Color.White.copy(alpha = 0.08f))
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
