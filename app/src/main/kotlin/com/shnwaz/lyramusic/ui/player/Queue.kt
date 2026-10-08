@@ -160,10 +160,8 @@ fun Queue(
                 (togetherSessionState as com.shnwaz.lyramusic.together.TogetherSessionState.Joined).role is com.shnwaz.lyramusic.together.TogetherRole.Guest
     val effectiveLocked = locked || togetherForcesLock
 
-    val playerDesignStyle by rememberEnumPreference(
-        key = PlayerDesignStyleKey,
-        defaultValue = PlayerDesignStyle.V4
-    )
+    // Only the Immersive design (V7) is kept
+    val playerDesignStyle = PlayerDesignStyle.V7
 
     val snackbarHostState = remember { SnackbarHostState() }
     var dismissJob: Job? by remember { mutableStateOf(null) }
