@@ -132,10 +132,6 @@ fun AppearanceSettings(
         DarkModeKey,
         defaultValue = DarkMode.AUTO
     )
-    val (playerDesignStyle, onPlayerDesignStyleChange) = rememberEnumPreference(
-        PlayerDesignStyleKey,
-        defaultValue = PlayerDesignStyle.V4
-    )
     val (miniPlayerBackgroundStyle, onMiniPlayerBackgroundStyleChange) = rememberEnumPreference(
         MiniPlayerBackgroundStyleKey,
         defaultValue = MiniPlayerBackgroundStyle.THEME
@@ -213,10 +209,12 @@ fun AppearanceSettings(
     val (lyricsLineSpacing, onLyricsLineSpacingChange) = rememberPreference(LyricsLineSpacingKey, defaultValue = 1.3f)
     val (useLyricsV2, onUseLyricsV2Change) = rememberPreference(UseLyricsV2Key, defaultValue = false)
 
-    val (sliderStyle, onSliderStyleChange) = rememberEnumPreference(
+    val (savedSliderStyle, onSliderStyleChange) = rememberEnumPreference(
         SliderStyleKey,
-        defaultValue = SliderStyle.Standard
+        defaultValue = SliderStyle.Simple
     )
+    // Only Simple and Thick sliders are kept
+    val sliderStyle = if (savedSliderStyle == SliderStyle.Thick) SliderStyle.Thick else SliderStyle.Simple
     val (swipeThumbnail, onSwipeThumbnailChange) = rememberPreference(
         SwipeThumbnailKey,
         defaultValue = true
@@ -292,11 +290,8 @@ fun AppearanceSettings(
     if (showSliderOptionDialog) {
         val sliderStyles = remember {
             listOf(
-                SliderStyle.Standard,
-                SliderStyle.Wavy,
-                SliderStyle.Thick,
-                SliderStyle.Circular,
-                SliderStyle.Simple
+                SliderStyle.Simple,
+                SliderStyle.Thick
             )
         }
         DefaultDialog(
@@ -417,24 +412,6 @@ fun AppearanceSettings(
             title = stringResource(R.string.player),
         )
 
-        EnumListPreference(
-            title = { Text(stringResource(R.string.player_design_style)) },
-            icon = { Icon(painterResource(R.drawable.palette), null) },
-            selectedValue = playerDesignStyle,
-            onValueSelected = onPlayerDesignStyleChange,
-            valueText = {
-                when (it) {
-                    PlayerDesignStyle.V1 -> stringResource(R.string.player_design_v1)
-                    PlayerDesignStyle.V2 -> stringResource(R.string.player_design_v2)
-                    PlayerDesignStyle.V3 -> stringResource(R.string.player_design_v3)
-                    PlayerDesignStyle.V4 -> stringResource(R.string.player_design_v4)
-                    PlayerDesignStyle.V5 -> stringResource(R.string.player_design_v5)
-                    PlayerDesignStyle.V6 -> stringResource(R.string.player_design_v6)
-                    PlayerDesignStyle.V7 -> stringResource(R.string.player_design_v7)
-                    PlayerDesignStyle.V8 -> stringResource(R.string.player_design_v8)
-                }
-            },
-        )
 
         EnumListPreference(
             title = { Text(stringResource(R.string.mini_player_design)) },
