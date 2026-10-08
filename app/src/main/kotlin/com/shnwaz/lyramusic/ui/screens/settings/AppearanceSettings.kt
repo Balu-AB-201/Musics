@@ -213,6 +213,10 @@ fun AppearanceSettings(
         SliderStyleKey,
         defaultValue = SliderStyle.Simple
     )
+    val (_, onPlayerDesignStyleChange) = rememberEnumPreference(
+        PlayerDesignStyleKey,
+        defaultValue = PlayerDesignStyle.V7
+    )
     // Only Simple and Thick sliders are kept
     val sliderStyle = if (savedSliderStyle == SliderStyle.Thick) SliderStyle.Thick else SliderStyle.Simple
     val (swipeThumbnail, onSwipeThumbnailChange) = rememberPreference(
@@ -412,6 +416,15 @@ fun AppearanceSettings(
             title = stringResource(R.string.player),
         )
 
+
+        ListPreference(
+            title = { Text(stringResource(R.string.player_design_style)) },
+            icon = { Icon(painterResource(R.drawable.palette), null) },
+            selectedValue = PlayerDesignStyle.V7,
+            values = listOf(PlayerDesignStyle.V7),
+            onValueSelected = onPlayerDesignStyleChange,
+            valueText = { stringResource(R.string.player_design_v7) },
+        )
 
         EnumListPreference(
             title = { Text(stringResource(R.string.mini_player_design)) },
