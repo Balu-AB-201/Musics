@@ -8,6 +8,9 @@
 
 package com.shnwaz.lyramusic.ui.component
 
+import android.content.Context
+import android.os.Build
+import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +27,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 
 val LocalMenuState = compositionLocalOf { MenuState() }
@@ -64,6 +69,8 @@ fun BottomSheetMenu(
     background: Color = MaterialTheme.colorScheme.surface,
 ) {
     val focusManager = LocalFocusManager.current
+    val glass = LocalLiquidGlassEnabled.current
+    val sheetView = LocalView.current
 
     if (state.isVisible) {
         ModalBottomSheet(
@@ -71,7 +78,8 @@ fun BottomSheetMenu(
                 focusManager.clearFocus()
                 state.isVisible = false
             },
-            containerColor = background,
+            containerColor = if (glass) Color.Transparent else background,
+            scrimColor = if (glass) Color.Black.copy(alpha = 0.25f) else BottomSheetDefaults.ScrimColor,
             contentColor = MaterialTheme.colorScheme.onSurface,
             dragHandle = {
                 Box(
@@ -82,8 +90,30 @@ fun BottomSheetMenu(
                         .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
                 )
             },
-            modifier = modifier.fillMaxHeight()
+            modifier = modifier
+                .fillMaxHeight()
+                .glassBubble(
+                    shape = BottomSheetDefaults.ExpandedShape,
+                    tint = MaterialTheme.colorScheme.surface.copy(alpha = 0.50f),
+                )
         ) {
+            // Real blur of the app behind the sheet (Android 12+, if the device allows it)
+            val contentView = LocalView.current
+            SideEffect {
+                if (glass && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    try {
+                        val root = contentView.rootView
+                        val lp = root.layoutParams as? WindowManager.LayoutParams
+                        if (lp != null && lp.blurBehindRadius != 40) {
+                            lp.flags = lp.flags or WindowManager.LayoutParams.FLAG_BLUR_BEHIND
+                            lp.blurBehindRadius = 40
+                            val wm = contentView.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                            wm.updateViewLayout(root, lp)
+                        }
+                    } catch (_: Throwable) {
+                    }
+                }
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
