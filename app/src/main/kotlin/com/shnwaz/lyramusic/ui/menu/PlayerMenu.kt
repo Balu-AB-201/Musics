@@ -48,6 +48,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import com.shnwaz.lyramusic.ui.component.Icon
+import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
+import com.shnwaz.lyramusic.ui.component.glassBubble
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Slider
@@ -352,8 +354,10 @@ fun ColumnScope.PlayerMenu(
         item {
             Surface(
                 shape = RoundedCornerShape(28.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                modifier = Modifier.fillMaxWidth(),
+                color = if (LocalLiquidGlassEnabled.current) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerLow,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .glassBubble(RoundedCornerShape(28.dp), Color.White.copy(alpha = 0.07f)),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -806,8 +810,10 @@ private fun PlayerVolumeCard(
 
     Surface(
         shape = RoundedCornerShape(28.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        modifier = modifier.fillMaxWidth(),
+        color = if (LocalLiquidGlassEnabled.current) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerLow,
+        modifier = modifier
+            .fillMaxWidth()
+            .glassBubble(RoundedCornerShape(28.dp), Color.White.copy(alpha = 0.07f)),
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
@@ -832,8 +838,10 @@ private fun PlayerVolumeCard(
 
             Surface(
                 shape = RoundedCornerShape(18.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                modifier = Modifier.fillMaxWidth(),
+                color = if (LocalLiquidGlassEnabled.current) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHighest,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .glassBubble(RoundedCornerShape(18.dp), Color.White.copy(alpha = 0.06f)),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
