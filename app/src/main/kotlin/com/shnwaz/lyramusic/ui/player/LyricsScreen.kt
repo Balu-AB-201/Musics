@@ -135,7 +135,8 @@ fun LyricsScreen(
     val playerVolume = playerConnection.service.playerVolume.collectAsState()
     
     // slider style preference
-    val sliderStyle by rememberEnumPreference(SliderStyleKey, SliderStyle.Standard)
+    val savedSliderStyle by rememberEnumPreference(SliderStyleKey, SliderStyle.Simple)
+    val sliderStyle = if (savedSliderStyle == SliderStyle.Thick) SliderStyle.Thick else SliderStyle.Simple
     val currentLyrics by playerConnection.currentLyrics.collectAsState(initial = null)
     val (useLyricsV2) = rememberPreference(UseLyricsV2Key, defaultValue = false)
 
