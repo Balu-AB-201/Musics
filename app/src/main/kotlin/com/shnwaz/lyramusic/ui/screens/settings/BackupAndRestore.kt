@@ -64,6 +64,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.shnwaz.lyramusic.ui.component.glassBubble
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -392,26 +393,29 @@ fun BackupAndRestore(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
                                     AssistChip(
+                                        modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                                         onClick = {},
                                         label = { Text(".backup") },
                                         colors = AssistChipDefaults.assistChipColors(
-                                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                            containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surfaceVariant,
                                             labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                         ),
                                     )
                                     AssistChip(
+                                        modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                                         onClick = {},
                                         label = { Text(".m3u") },
                                         colors = AssistChipDefaults.assistChipColors(
-                                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                            containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surfaceVariant,
                                             labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                         ),
                                     )
                                     AssistChip(
+                                        modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                                         onClick = {},
                                         label = { Text(".csv") },
                                         colors = AssistChipDefaults.assistChipColors(
-                                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                            containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surfaceVariant,
                                             labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                         ),
                                     )
@@ -589,6 +593,7 @@ fun BackupAndRestore(
                                         )
 
                                         AssistChip(
+                                            modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                                             onClick = {
                                                 clipboardManager.setText(AnnotatedString(cloudState.lastUploadUrl.orEmpty()))
                                                 android.widget.Toast.makeText(context, R.string.link_copied, android.widget.Toast.LENGTH_SHORT).show()
@@ -602,7 +607,7 @@ fun BackupAndRestore(
                                                 )
                                             },
                                             colors = AssistChipDefaults.assistChipColors(
-                                                containerColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f),
+                                                containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f),
                                                 labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
                                             )
                                         )
@@ -762,6 +767,7 @@ fun BackupAndRestore(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             AssistChip(
+                                modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                                 onClick = {},
                                 leadingIcon = {
                                     Icon(
@@ -772,11 +778,12 @@ fun BackupAndRestore(
                                 },
                                 label = { Text(stringResource(R.string.song_cache)) },
                                 colors = AssistChipDefaults.assistChipColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surfaceVariant,
                                     labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 ),
                             )
                             AssistChip(
+                                modifier = Modifier.glassBubble(androidx.compose.foundation.shape.RoundedCornerShape(8.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)),
                                 onClick = {},
                                 leadingIcon = {
                                     Icon(
@@ -787,7 +794,7 @@ fun BackupAndRestore(
                                 },
                                 label = { Text("Visitor Data") },
                                 colors = AssistChipDefaults.assistChipColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    containerColor = if (com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled.current) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surfaceVariant,
                                     labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 ),
                             )
