@@ -726,6 +726,7 @@ class MainActivity : ComponentActivity() {
                             Screens.Home.route,
                             Screens.Search.route,
                             Screens.Library.route,
+                            Screens.OfflineMusic.route,
                             "settings",
                         )
 
