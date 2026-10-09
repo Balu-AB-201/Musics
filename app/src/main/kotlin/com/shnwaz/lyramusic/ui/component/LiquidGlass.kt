@@ -74,13 +74,14 @@ fun Modifier.phoneXGlass(
     refractionHeight: Dp = 14.dp,
     refractionAmount: Dp = 28.dp,
     rimAlpha: Float = 0.55f,
+    lite: Boolean = false,
 ): Modifier = this.drawBackdrop(
     backdrop = backdrop,
     effects = {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (!lite && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             vibrancy()
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (!lite && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             blur(blurRadius.toPx())
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -88,8 +89,8 @@ fun Modifier.phoneXGlass(
             lens(
                 minOf(refractionHeight.toPx(), limit),
                 minOf(refractionAmount.toPx(), limit),
-                true,
-                true,
+                !lite,
+                !lite,
             )
         }
     },
@@ -229,9 +230,10 @@ fun Modifier.glassPanel(
             shape = shape,
             tint = tint,
             blurRadius = 3.dp,
-            refractionHeight = 14.dp,
-            refractionAmount = 28.dp,
+            refractionHeight = 12.dp,
+            refractionAmount = 22.dp,
             rimAlpha = 0.70f,
+            lite = true,
         )
     } else {
         this.frostedGlass(shape, tint)
