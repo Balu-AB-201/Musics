@@ -58,6 +58,7 @@ import com.shnwaz.lyramusic.ui.screens.artist.ArtistItemsScreen
 import com.shnwaz.lyramusic.ui.screens.artist.ArtistScreen
 import com.shnwaz.lyramusic.ui.screens.artist.ArtistSongsScreen
 import com.shnwaz.lyramusic.ui.screens.library.LibraryScreen
+import com.shnwaz.lyramusic.ui.screens.library.OfflineMusicScreen
 import com.shnwaz.lyramusic.ui.screens.playlist.AutoPlaylistScreen
 import com.shnwaz.lyramusic.ui.screens.playlist.LocalPlaylistScreen
 import com.shnwaz.lyramusic.ui.screens.playlist.OnlinePlaylistScreen
@@ -102,6 +103,9 @@ fun NavGraphBuilder.navigationBuilder(
         Screens.Library.route,
     ) {
         LibraryScreen(navController)
+    }
+    composable(Screens.OfflineMusic.route) {
+        OfflineMusicScreen(navController)
     }
     composable("history") {
         HistoryScreen(navController)

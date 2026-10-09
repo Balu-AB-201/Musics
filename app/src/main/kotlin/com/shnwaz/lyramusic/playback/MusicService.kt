@@ -71,6 +71,7 @@ import androidx.media3.exoplayer.audio.SilenceSkippingAudioProcessor
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.ShuffleOrder.DefaultShuffleOrder
 import androidx.media3.extractor.ExtractorsFactory
+import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.extractor.mkv.MatroskaExtractor
 import androidx.media3.extractor.mp4.FragmentedMp4Extractor
 import androidx.media3.extractor.mp4.Mp4Extractor
@@ -4308,6 +4309,11 @@ class MusicService :
 
     private fun createDataSourceFactory(): DataSource.Factory {
         return ResolvingDataSource.Factory(createCacheDataSource()) { dataSpec ->
+            // Local MediaStore items must bypass YouTube URL resolution and use Android's content resolver.
+            if (dataSpec.uri.scheme == "content" || dataSpec.uri.scheme == "file" || dataSpec.uri.scheme == "android.resource") {
+                return@Factory dataSpec
+            }
+
             val mediaId = dataSpec.key ?: error("No media id")
 
             val requiredCachedLength =
@@ -4499,7 +4505,11 @@ class MusicService :
         DefaultMediaSourceFactory(
             createDataSourceFactory(),
             ExtractorsFactory {
-                arrayOf(Mp4Extractor(), FragmentedMp4Extractor(), MatroskaExtractor())
+                // Keep the app's custom MP4/Matroska extractors while enabling the default audio
+                // extractors (MP3, FLAC, WAV, Ogg/Opus, AAC/ADTS, AMR, and other supported formats).
+                DefaultExtractorsFactory().createExtractors()
+                    .filterNot { it is Mp4Extractor || it is FragmentedMp4Extractor || it is MatroskaExtractor }
+                    .toTypedArray() + arrayOf(Mp4Extractor(), FragmentedMp4Extractor(), MatroskaExtractor())
             },
         )
 

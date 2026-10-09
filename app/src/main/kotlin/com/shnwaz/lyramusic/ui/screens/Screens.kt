@@ -48,6 +48,13 @@ sealed class Screens(
         route = "library"
     )
 
+    object OfflineMusic : Screens(
+        titleId = R.string.offline_music,
+        iconIdInactive = R.drawable.offline,
+        iconIdActive = R.drawable.offline,
+        route = "offline_music"
+    )
+
     object History : Screens(
         titleId = R.string.history,
         iconIdInactive = R.drawable.history,
@@ -63,6 +70,6 @@ sealed class Screens(
     )
 
     companion object {
-        val MainScreens = listOf(Home, Library, Settings)
+        val MainScreens = listOf(Home, Library, OfflineMusic, Settings)
     }
 }

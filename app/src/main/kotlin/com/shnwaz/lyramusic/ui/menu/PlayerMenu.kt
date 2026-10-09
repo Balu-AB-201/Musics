@@ -1337,6 +1337,8 @@ private fun multiplierToSlider(multiplier: Float): Float {
     return (0.5f + y / 2f).coerceIn(0f, 1f)
 }
 
+private val EQ_BAND_FREQUENCIES_HZ = listOf(31, 62, 125, 250, 500, 1_000, 2_000, 4_000, 8_000, 16_000)
+
 @SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -1364,9 +1366,10 @@ fun EqualizerDialog(
     val (customProfilesJson, setCustomProfilesJson) = rememberPreference(EqualizerCustomProfilesJsonKey, defaultValue = "")
 
     val caps = eqCapabilities
-    val bandCount = caps?.bandCount ?: 0
-    val minMb = caps?.minBandLevelMb ?: -1500
-    val maxMb = caps?.maxBandLevelMb ?: 1500
+    val nativeBandCount = caps?.bandCount ?: 0
+    val bandCount = EQ_BAND_FREQUENCIES_HZ.size
+    val minMb = (caps?.minBandLevelMb ?: -1500).coerceAtLeast(-1500)
+    val maxMb = (caps?.maxBandLevelMb ?: 1500).coerceAtMost(1500)
 
     var outputGainLocal by rememberSaveable { mutableIntStateOf(outputGainMb) }
     LaunchedEffect(outputGainMb) { outputGainLocal = outputGainMb }
@@ -1401,7 +1404,7 @@ fun EqualizerDialog(
                         EqProfile(
                             id = UUID.randomUUID().toString(),
                             name = trimmed,
-                            bandCenterFreqHz = caps?.centerFreqHz.orEmpty(),
+                            bandCenterFreqHz = EQ_BAND_FREQUENCIES_HZ,
                             bandLevelsMb = bandLevelsMb,
                             outputGainMb = outputGainMb,
                             bassBoostStrength = bassBoostStrength,
@@ -1610,7 +1613,7 @@ fun EqualizerDialog(
                 ) {
                     Spacer(Modifier.height(12.dp))
 
-                    if (caps == null || bandCount <= 0) {
+                    if (caps == null || nativeBandCount <= 0) {
                         Surface(
                             color = MaterialTheme.colorScheme.surfaceContainer,
                             shape = RoundedCornerShape(24.dp),
@@ -1760,7 +1763,13 @@ fun EqualizerDialog(
                             }
                         },
                     ) {
-                        caps.centerFreqHz.forEachIndexed { band, hz ->
+                        Text(
+                            text = "Ten frequency controls are mapped to the equalizer bands available on this device.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        )
+                        EQ_BAND_FREQUENCIES_HZ.forEachIndexed { band, hz ->
                             val label = formatHz(hz)
                             val value = bandLevelsMb.getOrNull(band) ?: 0
                             val valueDb = (value / 100f).coerceIn(-24f, 24f)
