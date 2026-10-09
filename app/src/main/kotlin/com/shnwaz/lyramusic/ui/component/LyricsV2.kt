@@ -65,6 +65,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
@@ -1283,11 +1284,21 @@ private fun AnimatedWordV2(
     // "lines and words that are done animating shouldnt continue to glow"
     // Make glow build up faster: reach max intensity at 50% progress
     val glowProgress = (progress * 2f).coerceAtMost(1f)
-    val glowAlpha = if (isWordActive) glowProgress * 0.45f else 0f
+    val glowAlpha = if (isWordActive) glowProgress * 0.25f else 0f
     val glowRadius = if (isWordActive) glowProgress * 12f else 0f
 
     val actualFontSize = if (isBackground) fontSize * 0.85f else fontSize
     val fontWeight = FontWeight.SemiBold // Consistent weight — no thin→bold jump
+
+    // ── Glass pill that sits under the word being sung ──
+    val pillAlpha by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (isWordActive) 1f else 0f,
+        animationSpec = androidx.compose.animation.core.tween(
+            durationMillis = if (isWordActive) 140 else 320,
+            easing = androidx.compose.animation.core.FastOutSlowInEasing
+        ),
+        label = "wordGlassPill"
+    )
 
     // ── Two-layer rendering: dim base + liquid fill overlay ──
     Box(
@@ -1296,6 +1307,69 @@ private fun AnimatedWordV2(
                 translationY = floatOffset * density
                 scaleX = wordScale
                 scaleY = wordScale
+            }
+            .drawBehind {
+                if (pillAlpha > 0.01f && !isBackground) {
+                    val a = pillAlpha
+                    val padX = 7.dp.toPx()
+                    val padY = 1.dp.toPx()
+                    val grow = 0.92f + 0.08f * a
+                    val w = (size.width + padX * 2f) * grow
+                    val h = (size.height + padY * 2f) * grow
+                    val left = (size.width - w) / 2f
+                    val top = (size.height - h) / 2f
+                    val topLeft = Offset(left, top)
+                    val pillSize = androidx.compose.ui.geometry.Size(w, h)
+                    val radius = androidx.compose.ui.geometry.CornerRadius(h / 2f, h / 2f)
+                    // 1. milky glass body
+                    drawRoundRect(
+                        color = Color.White.copy(alpha = 0.10f * a),
+                        topLeft = topLeft,
+                        size = pillSize,
+                        cornerRadius = radius,
+                    )
+                    // 2. top sheen and bottom glow
+                    drawRoundRect(
+                        brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                            0f to Color.White.copy(alpha = 0.24f * a),
+                            0.5f to Color.White.copy(alpha = 0.03f * a),
+                            1f to Color.White.copy(alpha = 0.10f * a),
+                            startY = top,
+                            endY = top + h,
+                        ),
+                        topLeft = topLeft,
+                        size = pillSize,
+                        cornerRadius = radius,
+                    )
+                    // 3. specular highlight that travels with the word progress
+                    drawRoundRect(
+                        brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.30f * a),
+                                Color.Transparent,
+                            ),
+                            center = Offset(left + w * progress, top + h * 0.35f),
+                            radius = h * 0.95f,
+                        ),
+                        topLeft = topLeft,
+                        size = pillSize,
+                        cornerRadius = radius,
+                    )
+                    // 4. rim light
+                    drawRoundRect(
+                        brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                            0f to Color.White.copy(alpha = 0.65f * a),
+                            0.5f to Color.White.copy(alpha = 0.06f * a),
+                            1f to Color.White.copy(alpha = 0.35f * a),
+                            start = topLeft,
+                            end = Offset(left + w, top + h),
+                        ),
+                        topLeft = topLeft,
+                        size = pillSize,
+                        cornerRadius = radius,
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.5.dp.toPx()),
+                    )
+                }
             }
     ) {
         // Layer 1: Base text (always dimmed)
