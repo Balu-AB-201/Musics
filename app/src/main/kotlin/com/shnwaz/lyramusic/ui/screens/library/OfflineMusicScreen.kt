@@ -10,6 +10,7 @@ import android.content.ContentUris
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.MediaStore
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -49,6 +50,7 @@ import androidx.media3.common.MediaMetadata
 import androidx.navigation.NavController
 import com.shnwaz.lyramusic.LocalPlayerConnection
 import com.shnwaz.lyramusic.playback.queues.ListQueue
+import com.shnwaz.lyramusic.ui.component.glassBubble
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -237,7 +239,7 @@ fun OfflineMusicScreen(navController: NavController) {
                 ) {
                     items(tracks, key = { it.id }) { track ->
                         Surface(
-                            modifier = Modifier.fillMaxWidth().clickable {
+                            modifier = Modifier.fillMaxWidth().glassBubble(RoundedCornerShape(16.dp), androidx.compose.ui.graphics.Color.White.copy(alpha = 0.08f)).clickable {
                                 val connection = playerConnection ?: return@clickable
                                 val items = tracks.map { it.toMediaItem() }
                                 val index = tracks.indexOfFirst { it.id == track.id }.coerceAtLeast(0)
