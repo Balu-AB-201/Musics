@@ -26,7 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Sort
+import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Shuffle
 import androidx.compose.material3.AlertDialog
@@ -59,7 +59,7 @@ import androidx.core.content.ContextCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata as Media3Metadata
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.shnwaz.lyramusic.LocalPlayerConnection
 import com.shnwaz.lyramusic.di.LyricsHelperEntryPoint
 import com.shnwaz.lyramusic.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
