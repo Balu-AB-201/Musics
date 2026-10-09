@@ -1337,11 +1337,11 @@ private fun multiplierToSlider(multiplier: Float): Float {
     return (0.5f + y / 2f).coerceIn(0f, 1f)
 }
 
+private val EQ_BAND_FREQUENCIES_HZ = listOf(31, 62, 125, 250, 500, 1_000, 2_000, 4_000, 8_000, 16_000)
+
 @SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private val EQ_BAND_FREQUENCIES_HZ = listOf(31, 62, 125, 250, 500, 1_000, 2_000, 4_000, 8_000, 16_000)
-
 fun EqualizerDialog(
     onDismiss: () -> Unit,
     openSystemEqualizer: () -> Unit,
