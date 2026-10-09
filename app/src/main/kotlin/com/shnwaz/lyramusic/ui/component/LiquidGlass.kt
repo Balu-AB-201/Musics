@@ -163,6 +163,35 @@ fun Modifier.glassBubble(
 ): Modifier =
     if (LocalLiquidGlassEnabled.current) this.frostedGlass(shape, tint) else this
 
+/** Backdrop of the full player background (Immersive design). Provided in Player.kt. */
+val LocalPlayerBackdrop = staticCompositionLocalOf<PlatformBackdrop?> { null }
+
+/**
+ * Glass for controls that sit on top of the full player background.
+ * Real bending glass when the player backdrop is available, otherwise frosted glass.
+ */
+@Composable
+fun Modifier.glassControl(
+    shape: Shape = CircleShape,
+    tint: Color = Color.White.copy(alpha = 0.10f),
+): Modifier {
+    if (!LocalLiquidGlassEnabled.current) return this
+    val backdrop = LocalPlayerBackdrop.current
+    return if (backdrop != null) {
+        this.phoneXGlass(
+            backdrop = backdrop,
+            shape = shape,
+            tint = tint,
+            blurRadius = 2.dp,
+            refractionHeight = 12.dp,
+            refractionAmount = 24.dp,
+            rimAlpha = 0.70f,
+        )
+    } else {
+        this.frostedGlass(shape, tint)
+    }
+}
+
 /**
  * Glass layer drawn on top of album art: bright top sheen, soft bottom glow
  * and a rim light. No-op unless Liquid Glass is enabled.
