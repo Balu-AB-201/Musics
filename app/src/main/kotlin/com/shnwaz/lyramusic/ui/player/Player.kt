@@ -51,6 +51,10 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import com.shnwaz.lyramusic.ui.component.Icon
+import com.shnwaz.lyramusic.ui.component.LocalPlayerBackdrop
+import com.shnwaz.lyramusic.ui.component.layerBackdrop
+import com.shnwaz.lyramusic.ui.component.rememberGlassBackdrop
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Slider
@@ -705,6 +709,10 @@ fun BottomSheetPlayer(
             )
         },
     ) {
+        val playerBackdrop = rememberGlassBackdrop()
+        CompositionLocalProvider(
+            LocalPlayerBackdrop provides (if (playerDesignStyle == PlayerDesignStyle.V7) playerBackdrop else null)
+        ) {
         val onSliderValueChange: (Long) -> Unit = {
             isUserSeeking = true
             sliderPosition = it
@@ -883,6 +891,7 @@ fun BottomSheetPlayer(
                             .fillMaxSize(),
                     ) {
                         V7PlayerBackdrop(
+                            modifier = Modifier.layerBackdrop(playerBackdrop),
                             thumbnailUrl = mediaMetadata?.thumbnailUrl,
                             disableBlur = disableBlur,
                             label = "v7BackdropLandscape",
@@ -1027,6 +1036,7 @@ fun BottomSheetPlayer(
                             .fillMaxSize(),
                     ) {
                         V7PlayerBackdrop(
+                            modifier = Modifier.layerBackdrop(playerBackdrop),
                             thumbnailUrl = mediaMetadata?.thumbnailUrl,
                             disableBlur = disableBlur,
                             label = "v7BackdropPortrait",
@@ -1135,6 +1145,7 @@ fun BottomSheetPlayer(
                     )
                 }
             }
+        }
         }
     }
 }
