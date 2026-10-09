@@ -1,6 +1,8 @@
 package com.shnwaz.lyramusic.ui.component
 
 import android.os.Build
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -162,6 +164,79 @@ fun Modifier.glassBubble(
     tint: Color = Color.White.copy(alpha = 0.10f),
 ): Modifier =
     if (LocalLiquidGlassEnabled.current) this.frostedGlass(shape, tint) else this
+
+/** Backdrop of the screen background (soft color blobs). Provided in MainActivity. */
+val LocalScreenBackdrop = staticCompositionLocalOf<PlatformBackdrop?> { null }
+
+@Composable
+fun rememberScreenBackdrop(): PlatformBackdrop = rememberLayerBackdrop()
+
+/**
+ * Soft colored background that the screen glass panels bend.
+ * Draw it BEHIND the screens, never around them.
+ */
+@Composable
+fun ScreenGlassBackground(backdrop: PlatformBackdrop, modifier: Modifier = Modifier) {
+    val base = MaterialTheme.colorScheme.background
+    val c1 = MaterialTheme.colorScheme.primary.copy(alpha = 0.30f)
+    val c2 = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.24f)
+    val c3 = MaterialTheme.colorScheme.secondary.copy(alpha = 0.22f)
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .nativeBackdrop(backdrop)
+            .drawBehind {
+                drawRect(base)
+                drawRect(
+                    Brush.radialGradient(
+                        listOf(c1, Color.Transparent),
+                        center = Offset(size.width * 0.15f, size.height * 0.15f),
+                        radius = size.minDimension * 0.9f,
+                    ),
+                )
+                drawRect(
+                    Brush.radialGradient(
+                        listOf(c2, Color.Transparent),
+                        center = Offset(size.width * 0.90f, size.height * 0.50f),
+                        radius = size.minDimension * 0.9f,
+                    ),
+                )
+                drawRect(
+                    Brush.radialGradient(
+                        listOf(c3, Color.Transparent),
+                        center = Offset(size.width * 0.25f, size.height * 0.92f),
+                        radius = size.minDimension * 0.9f,
+                    ),
+                )
+            },
+    )
+}
+
+/**
+ * Large glass panel (settings cards, groups). Real bending glass when the
+ * screen backdrop is available, otherwise frosted glass.
+ */
+@Composable
+fun Modifier.glassPanel(
+    shape: Shape,
+    tint: Color = Color.White.copy(alpha = 0.07f),
+): Modifier {
+    if (!LocalLiquidGlassEnabled.current) return this
+    val backdrop = LocalScreenBackdrop.current
+    return if (backdrop != null) {
+        this.phoneXGlass(
+            backdrop = backdrop,
+            shape = shape,
+            tint = tint,
+            blurRadius = 3.dp,
+            refractionHeight = 14.dp,
+            refractionAmount = 28.dp,
+            rimAlpha = 0.70f,
+        )
+    } else {
+        this.frostedGlass(shape, tint)
+    }
+}
 
 /** Backdrop of the full player background (Immersive design). Provided in Player.kt. */
 val LocalPlayerBackdrop = staticCompositionLocalOf<PlatformBackdrop?> { null }

@@ -175,7 +175,7 @@ fun PreferenceEntry(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 3.dp)
                 .graphicsLayer { scaleX = scale; scaleY = scale }
-                .glassBubble(
+                .glassPanel(
                     shape = RoundedCornerShape(16.dp),
                     tint = Color.White.copy(alpha = 0.07f),
                 ),
@@ -620,7 +620,7 @@ fun PreferenceGroup(
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .glassBubble(
+                .glassPanel(
                     shape = RoundedCornerShape(16.dp),
                     tint = Color.White.copy(alpha = 0.07f),
                 ),

@@ -55,7 +55,7 @@ fun Material3SettingsGroup(
             modifier = Modifier
                 .fillMaxWidth()
                 .animateContentSize()
-                .glassBubble(
+                .glassPanel(
                     shape = RoundedCornerShape(24.dp),
                     tint = Color.White.copy(alpha = 0.07f),
                 ),
