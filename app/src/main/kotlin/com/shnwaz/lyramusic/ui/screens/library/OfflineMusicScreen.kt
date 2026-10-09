@@ -97,7 +97,7 @@ fun OfflineMusicScreen(navController: NavController) {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
 
-    var hasPermission by remember {
+    val coroutineScope = rememberCoroutineScope()\n    var hasPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED,
         )
@@ -190,7 +190,7 @@ fun OfflineMusicScreen(navController: NavController) {
             }
             TextButton(
                 enabled = hasPermission && !loading,
-                onClick = { kotlinx.coroutines.MainScope().let { scope -> scope.launch { loadTracks() } } },
+                onClick = { coroutineScope.launch { loadTracks() } },
             ) {
                 Text("Refresh")
             }
