@@ -39,7 +39,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import com.shnwaz.lyramusic.ui.component.Icon
-import com.shnwaz.lyramusic.ui.component.glassBubble
+import com.shnwaz.lyramusic.ui.component.glassControl
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -1168,7 +1168,7 @@ fun QueueCollapsedContentV7(
             val iconSize = 22.dp
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Surface(
@@ -1176,8 +1176,8 @@ fun QueueCollapsedContentV7(
                     shape = CircleShape,
                     color = textBackgroundColor.copy(alpha = 0.08f),
                     modifier = Modifier
-                        .size(42.dp)
-                        .glassBubble(CircleShape, Color.White.copy(alpha = 0.08f))
+                        .size(44.dp)
+                        .glassControl(CircleShape, Color.White.copy(alpha = 0.08f))
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -1197,8 +1197,8 @@ fun QueueCollapsedContentV7(
                     shape = CircleShape,
                     color = textBackgroundColor.copy(alpha = 0.08f),
                     modifier = Modifier
-                        .size(42.dp)
-                        .glassBubble(CircleShape, Color.White.copy(alpha = 0.08f))
+                        .size(44.dp)
+                        .glassControl(CircleShape, Color.White.copy(alpha = 0.08f))
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -1219,8 +1219,8 @@ fun QueueCollapsedContentV7(
                 shape = RoundedCornerShape(20.dp),
                 color = textBackgroundColor.copy(alpha = 0.08f),
                 modifier = Modifier
-                    .height(36.dp)
-                    .glassBubble(RoundedCornerShape(20.dp), Color.White.copy(alpha = 0.08f))
+                    .height(44.dp)
+                    .glassControl(RoundedCornerShape(20.dp), Color.White.copy(alpha = 0.08f))
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
