@@ -76,10 +76,7 @@ private data class DeviceAudioTrack(
                     .setAlbumTitle(album)
                     .setArtworkUri(
                         if (albumId > 0L) {
-                            ContentUris.withAppendedId(
-                                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                                albumId,
-                            )
+                            Uri.parse("content://media/external/audio/albumart/$albumId")
                         } else {
                             null
                         },
