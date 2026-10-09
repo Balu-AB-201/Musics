@@ -48,7 +48,14 @@ sealed class Screens(
         route = "library"
     )
 
-    object OfflineMusic : Screens(\n        titleId = R.string.offline_music,\n        iconIdInactive = R.drawable.offline,\n        iconIdActive = R.drawable.offline,\n        route = "offline_music"\n    )\n\n    object History : Screens(
+    object OfflineMusic : Screens(
+        titleId = R.string.offline_music,
+        iconIdInactive = R.drawable.offline,
+        iconIdActive = R.drawable.offline,
+        route = "offline_music"
+    )
+
+    object History : Screens(
         titleId = R.string.history,
         iconIdInactive = R.drawable.history,
         iconIdActive = R.drawable.history,
