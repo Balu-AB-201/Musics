@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +50,7 @@ import androidx.navigation.NavController
 import com.shnwaz.lyramusic.LocalPlayerConnection
 import com.shnwaz.lyramusic.playback.queues.ListQueue
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private data class DeviceAudioTrack(
@@ -97,7 +99,8 @@ fun OfflineMusicScreen(navController: NavController) {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
 
-    val coroutineScope = rememberCoroutineScope()\n    var hasPermission by remember {
+    val coroutineScope = rememberCoroutineScope()
+    var hasPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED,
         )
