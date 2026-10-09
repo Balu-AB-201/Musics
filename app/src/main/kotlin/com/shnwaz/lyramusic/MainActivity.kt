@@ -213,6 +213,9 @@ import com.shnwaz.lyramusic.ui.component.EXPANDED_ANCHOR
 import com.shnwaz.lyramusic.ui.component.FloatingNavigationToolbar
 import com.shnwaz.lyramusic.ui.component.LocalBackdrop
 import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
+import com.shnwaz.lyramusic.ui.component.LocalScreenBackdrop
+import com.shnwaz.lyramusic.ui.component.ScreenGlassBackground
+import com.shnwaz.lyramusic.ui.component.rememberScreenBackdrop
 import com.shnwaz.lyramusic.ui.component.layerBackdrop
 import com.shnwaz.lyramusic.ui.component.rememberGlassBackdrop
 import com.shnwaz.lyramusic.ui.component.IconButton
@@ -1101,10 +1104,12 @@ class MainActivity : ComponentActivity() {
 
 
                     val glassBackdrop = rememberGlassBackdrop()
+                    val screenBackdrop = rememberScreenBackdrop()
 
                     CompositionLocalProvider(
                         LocalBackdrop provides glassBackdrop,
                         LocalLiquidGlassEnabled provides liquidGlassNavBar,
+                        LocalScreenBackdrop provides (if (liquidGlassNavBar) screenBackdrop else null),
                         LocalDatabase provides database,
                         LocalContentColor provides if (pureBlack) Color.White else contentColorFor(MaterialTheme.colorScheme.surface),
                         LocalPlayerConnection provides playerConnection,
@@ -1604,6 +1609,10 @@ class MainActivity : ComponentActivity() {
                                     .fillMaxSize()
                                     .nestedScroll(searchBarScrollBehavior.nestedScrollConnection)
                             ) {
+                            Box(modifier = Modifier.fillMaxSize().layerBackdrop(glassBackdrop)) {
+                            if (liquidGlassNavBar) {
+                                ScreenGlassBackground(backdrop = screenBackdrop)
+                            }
                                 NavHost(
                                     navController = navController,
                                     startDestination = when (tabOpenedFromShortcut ?: defaultOpenTab) {
@@ -1639,7 +1648,7 @@ class MainActivity : ComponentActivity() {
                                             fadeOut(tween(200)) + slideOutHorizontally { it / 2 }
                                         }
                                     },
-                                    modifier = Modifier.layerBackdrop(glassBackdrop).nestedScroll(
+                                    modifier = Modifier.nestedScroll(
                                         if (navigationItems.fastAny { it.route == navBackStackEntry?.destination?.route } ||
                                             navBackStackEntry?.destination?.route?.startsWith("search/") == true
                                         ) {
@@ -1655,6 +1664,7 @@ class MainActivity : ComponentActivity() {
                                         latestVersionName
                                     )
                                 }
+                            }
                             }
                         }
 
