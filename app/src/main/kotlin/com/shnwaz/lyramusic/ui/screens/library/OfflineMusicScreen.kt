@@ -65,6 +65,9 @@ import com.shnwaz.lyramusic.di.LyricsHelperEntryPoint
 import com.shnwaz.lyramusic.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
 import com.shnwaz.lyramusic.lyrics.LyricsHelper
 import com.shnwaz.lyramusic.models.MediaMetadata as AppMediaMetadata
+import com.shnwaz.lyramusic.ui.component.LocalBackdrop
+import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
+import com.shnwaz.lyramusic.ui.component.phoneXGlass
 import com.shnwaz.lyramusic.playback.queues.ListQueue
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
@@ -88,10 +91,14 @@ private data class DeviceAudioTrack(
         MediaItem.Builder()
             .setMediaId(uri.toString())
             .setUri(uri)
+            // The existing player reads its app-level metadata from MediaItem.tag.
+            // Without this tag the player screen cannot resolve title, artist, lyrics, or artwork.
+            .setTag(toLyricsMetadata())
             .setMediaMetadata(
                 Media3Metadata.Builder()
                     .setTitle(title)
                     .setArtist(artist)
+                    .setSubtitle(artist)
                     .setAlbumTitle(album)
                     .setArtworkUri(artworkUri)
                     .setIsPlayable(true)
@@ -135,6 +142,10 @@ fun OfflineMusicScreen(navController: NavController) {
     var loadError by remember { mutableStateOf<String?>(null) }
     var sort by remember { mutableStateOf(OfflineSort.TITLE) }
     var sortMenuExpanded by remember { mutableStateOf(false) }
+    var minimumDurationSeconds by remember { mutableStateOf(0L) }
+    var durationMenuExpanded by remember { mutableStateOf(false) }
+    val liquidGlassEnabled = LocalLiquidGlassEnabled.current
+    val glassBackdrop = LocalBackdrop.current
     var lyricsTrack by remember { mutableStateOf<DeviceAudioTrack?>(null) }
     var lyricsText by remember { mutableStateOf("") }
     var lyricsLoading by remember { mutableStateOf(false) }
@@ -203,12 +214,13 @@ fun OfflineMusicScreen(navController: NavController) {
         loading = false
     }
 
-    val sortedTracks = remember(tracks, sort) {
+    val sortedTracks = remember(tracks, sort, minimumDurationSeconds) {
+        val filtered = tracks.filter { it.durationMs >= minimumDurationSeconds * 1000L }
         when (sort) {
-            OfflineSort.TITLE -> tracks.sortedBy { it.title.lowercase() }
-            OfflineSort.ARTIST -> tracks.sortedBy { it.artist.lowercase() }
-            OfflineSort.DURATION_SHORT -> tracks.sortedBy { it.durationMs }
-            OfflineSort.DURATION_LONG -> tracks.sortedByDescending { it.durationMs }
+            OfflineSort.TITLE -> filtered.sortedBy { it.title.lowercase() }
+            OfflineSort.ARTIST -> filtered.sortedBy { it.artist.lowercase() }
+            OfflineSort.DURATION_SHORT -> filtered.sortedBy { it.durationMs }
+            OfflineSort.DURATION_LONG -> filtered.sortedByDescending { it.durationMs }
         }
     }
 
@@ -278,11 +290,24 @@ fun OfflineMusicScreen(navController: NavController) {
             ) {
                 Icon(Icons.Outlined.Shuffle, contentDescription = "Shuffle offline music")
             }
+            Box {
+                TextButton(onClick = { durationMenuExpanded = true }, enabled = hasPermission && !loading) {
+                    Text(if (minimumDurationSeconds == 0L) "Min length" else "Min ${minimumDurationSeconds}s")
+                }
+                DropdownMenu(expanded = durationMenuExpanded, onDismissRequest = { durationMenuExpanded = false }) {
+                    listOf(0L, 15L, 30L, 60L, 90L, 120L).forEach { seconds ->
+                        DropdownMenuItem(
+                            text = { Text(if (seconds == 0L) "Show all durations" else "At least ${seconds}s") },
+                            onClick = { minimumDurationSeconds = seconds; durationMenuExpanded = false },
+                        )
+                    }
+                }
+            }
             TextButton(enabled = hasPermission && !loading, onClick = { coroutineScope.launch { loadTracks() } }) {
                 Text("Refresh")
             }
         }
-        Text("Sort: ${sort.label}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(bottom = 8.dp))
+        Text("Sort: ${sort.label} · Minimum: ${if (minimumDurationSeconds == 0L) "off" else "${minimumDurationSeconds}s"}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(bottom = 8.dp))
 
         when {
             !hasPermission -> Surface(
@@ -319,14 +344,16 @@ fun OfflineMusicScreen(navController: NavController) {
             ) {
                 items(sortedTracks, key = { it.id }) { track ->
                     Surface(
-                        modifier = Modifier.fillMaxWidth().clickable {
+                        modifier = Modifier.fillMaxWidth()
+                            .then(if (liquidGlassEnabled && glassBackdrop != null) Modifier.phoneXGlass(glassBackdrop, RoundedCornerShape(16.dp)) else Modifier)
+                            .clickable {
                             val connection = playerConnection ?: return@clickable
                             val queueItems = sortedTracks.map { it.toMediaItem() }
                             val index = sortedTracks.indexOfFirst { it.id == track.id }.coerceAtLeast(0)
                             connection.playQueue(ListQueue(title = "On-device music", items = queueItems, startIndex = index))
                         },
                         shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                        color = if (liquidGlassEnabled && glassBackdrop != null) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surfaceContainerLow,
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
@@ -336,7 +363,9 @@ fun OfflineMusicScreen(navController: NavController) {
                             AsyncImage(
                                 model = track.artworkUri,
                                 contentDescription = "Album artwork for ${track.title}",
-                                modifier = Modifier.size(54.dp).clip(RoundedCornerShape(10.dp)),
+                                modifier = Modifier.size(54.dp).clip(RoundedCornerShape(10.dp)).then(
+                                    if (liquidGlassEnabled && glassBackdrop != null) Modifier.phoneXGlass(glassBackdrop, RoundedCornerShape(10.dp), lite = true) else Modifier,
+                                ),
                                 contentScale = ContentScale.Crop,
                             )
                             Column(modifier = Modifier.weight(1f)) {
