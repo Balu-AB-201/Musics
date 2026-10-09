@@ -178,7 +178,9 @@ fun OfflineMusicScreen(navController: NavController) {
                 context.contentResolver.query(
                     collection,
                     projection,
-                    "${MediaStore.Audio.Media.IS_MUSIC} != 0",
+                    // Include every audio row exposed by MediaStore, not only files
+                    // tagged as "music"; the duration filter can exclude short recordings.
+                    null,
                     null,
                     "${MediaStore.Audio.Media.TITLE} COLLATE NOCASE ASC",
                 )?.use { cursor ->
