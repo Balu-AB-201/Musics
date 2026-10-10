@@ -221,6 +221,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     implementation(libs.material3)
+    implementation(libs.compose.material.icons.extended)
     implementation(libs.palette)
     implementation(libs.multiplatform.markdown)
 
