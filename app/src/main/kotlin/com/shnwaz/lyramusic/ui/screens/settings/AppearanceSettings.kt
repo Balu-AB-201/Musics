@@ -103,6 +103,9 @@ import com.shnwaz.lyramusic.ui.component.DefaultDialog
 import com.shnwaz.lyramusic.ui.component.EnumListPreference
 import com.shnwaz.lyramusic.ui.component.IconButton
 import com.shnwaz.lyramusic.ui.component.ListPreference
+import com.shnwaz.lyramusic.ui.component.GlassTheme
+import com.shnwaz.lyramusic.ui.component.GlassThemeKey
+import com.shnwaz.lyramusic.ui.component.UiThemeChoice
 import com.shnwaz.lyramusic.ui.component.PreferenceEntry
 import com.shnwaz.lyramusic.ui.component.PreferenceGroupTitle
 import com.shnwaz.lyramusic.ui.component.SwitchPreference
@@ -271,6 +274,7 @@ fun AppearanceSettings(
         it != PlayerBackgroundStyle.BLUR || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     }
 
+    val (glassTheme, onGlassThemeChange) = rememberEnumPreference(GlassThemeKey, GlassTheme.LIQUID)
     val (liquidGlassNavBar, onLiquidGlassNavBarChange) = rememberPreference(
         LiquidGlassNavBarKey,
         defaultValue = false
@@ -932,12 +936,35 @@ fun AppearanceSettings(
             onCheckedChange = onSlimNavChange
         )
 
-        SwitchPreference(
-            title = { Text(stringResource(R.string.liquid_glass_navbar)) },
-            description = stringResource(R.string.liquid_glass_navbar_desc),
+        ListPreference(
+            title = { Text("Theme") },
             icon = { Icon(painterResource(R.drawable.palette), null) },
-            checked = liquidGlassNavBar,
-            onCheckedChange = onLiquidGlassNavBarChange,
+            selectedValue = when {
+                !liquidGlassNavBar -> UiThemeChoice.DEFAULT
+                glassTheme == GlassTheme.LIQUID -> UiThemeChoice.LIQUID_GLASS
+                else -> UiThemeChoice.GLASS
+            },
+            values = listOf(UiThemeChoice.DEFAULT, UiThemeChoice.GLASS, UiThemeChoice.LIQUID_GLASS),
+            valueText = {
+                when (it) {
+                    UiThemeChoice.DEFAULT -> "Default"
+                    UiThemeChoice.GLASS -> "Glass"
+                    UiThemeChoice.LIQUID_GLASS -> "Liquid Glass"
+                }
+            },
+            onValueSelected = { choice ->
+                when (choice) {
+                    UiThemeChoice.DEFAULT -> onLiquidGlassNavBarChange(false)
+                    UiThemeChoice.GLASS -> {
+                        onGlassThemeChange(GlassTheme.GLASS)
+                        onLiquidGlassNavBarChange(true)
+                    }
+                    UiThemeChoice.LIQUID_GLASS -> {
+                        onGlassThemeChange(GlassTheme.LIQUID)
+                        onLiquidGlassNavBarChange(true)
+                    }
+                }
+            },
         )
 
 
