@@ -161,9 +161,11 @@ fun LibraryMixScreen(
         )
     }
 
-    val (showLiked) = rememberPreference(ShowLikedPlaylistKey, true)
+    // Favorites tile is hidden by request
+    val showLiked = false
     val (showDownloaded) = rememberPreference(ShowDownloadedPlaylistKey, true)
-    val (showTop) = rememberPreference(ShowTopPlaylistKey, true)
+    // Top 50 tile is hidden by request
+    val showTop = false
     val (showCached) = rememberPreference(ShowCachedPlaylistKey, true)
 
     val albums by viewModel.albums.collectAsState()
