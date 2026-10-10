@@ -221,6 +221,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     implementation(libs.material3)
+    // Required by OfflineMusicScreen's Material Icons imports.
+    implementation(libs.compose.material.icons.extended)
     implementation(libs.palette)
     implementation(libs.multiplatform.markdown)
 
