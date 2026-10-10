@@ -110,6 +110,10 @@ fun FloatingNavigationToolbar(
                         tint = glassTint,
                     )
                     .padding(horizontal = 8.dp, vertical = 6.dp)
+            } else if (liquidGlass) {
+                Modifier
+                    .frostedGlass(shape = CircleShape, tint = glassTint)
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
             } else {
                 Modifier
             }
@@ -406,8 +410,7 @@ private fun FloatingNavigationToolbarItem(
 // ── Real glass helpers (bottom bar sits outside the recorded backdrop) ──────
 
 @Composable
-private fun glassActive(liquidGlass: Boolean): Boolean =
-    liquidGlass && LocalBackdrop.current != null
+private fun glassActive(liquidGlass: Boolean): Boolean = liquidGlass
 
 @Composable
 private fun Modifier.toolbarGlass(liquidGlass: Boolean, tint: Color): Modifier {
@@ -422,6 +425,8 @@ private fun Modifier.toolbarGlass(liquidGlass: Boolean, tint: Color): Modifier {
             refractionAmount = 24.dp,
             rimAlpha = 0.7f,
         )
+    } else if (liquidGlass) {
+        this.frostedGlass(shape = CircleShape, tint = tint)
     } else {
         this
     }

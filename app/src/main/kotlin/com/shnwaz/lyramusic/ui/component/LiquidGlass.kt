@@ -1,6 +1,8 @@
 package com.shnwaz.lyramusic.ui.component
 
 import android.os.Build
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
@@ -21,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
@@ -214,31 +217,29 @@ fun ScreenGlassBackground(backdrop: PlatformBackdrop, modifier: Modifier = Modif
 }
 
 /**
- * Large glass panel (settings cards, groups). Real bending glass when the
- * screen backdrop is available, otherwise frosted glass.
+ * Large glass panel (settings cards, groups): the light translucent card used on
+ * the On-device screen. No shaders, so long settings lists scroll smoothly.
  */
 @Composable
 fun Modifier.glassPanel(
     shape: Shape,
-    tint: Color = Color.White.copy(alpha = 0.07f),
+    tint: Color = Color.Unspecified,
 ): Modifier {
     if (!LocalLiquidGlassEnabled.current) return this
-    val backdrop = LocalScreenBackdrop.current
-    return if (backdrop != null) {
-        this.phoneXGlass(
-            backdrop = backdrop,
-            shape = shape,
-            tint = tint,
-            blurRadius = 3.dp,
-            refractionHeight = 12.dp,
-            refractionAmount = 22.dp,
-            rimAlpha = 0.70f,
-            lite = true,
-        )
-    } else {
-        this.frostedGlass(shape, tint)
-    }
+    val fill = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.82f)
+    val line = MaterialTheme.colorScheme.outline.copy(alpha = 0.28f)
+    return this
+        .background(fill, shape)
+        .border(width = 1.dp, color = line, shape = shape)
 }
+
+/** Theme choices shown in Settings → Appearance → Theme. */
+enum class UiThemeChoice { DEFAULT, GLASS, LIQUID_GLASS }
+
+/** Which glass level is used when a glass theme is on. */
+enum class GlassTheme { GLASS, LIQUID }
+
+val GlassThemeKey = stringPreferencesKey("glass_theme")
 
 /** Backdrop of the full player background (Immersive design). Provided in Player.kt. */
 val LocalPlayerBackdrop = staticCompositionLocalOf<PlatformBackdrop?> { null }
