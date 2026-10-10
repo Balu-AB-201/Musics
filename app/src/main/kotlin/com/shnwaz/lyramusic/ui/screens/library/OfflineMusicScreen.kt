@@ -455,7 +455,7 @@ fun OfflineMusicScreen(navController: NavController) {
 
         // Three equal buttons on one line: Sort, Minimum length and Shuffle.
         Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
