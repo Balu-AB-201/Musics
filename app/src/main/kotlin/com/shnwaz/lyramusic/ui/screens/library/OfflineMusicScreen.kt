@@ -162,8 +162,9 @@ fun OfflineMusicScreen(navController: NavController) {
     suspend fun loadTracks() {
         loading = true
         loadError = null
-        val result = withContext(Dispatchers.IO) {
+        val (result, errorMessage) = withContext(Dispatchers.IO) {
             val loaded = mutableListOf<DeviceAudioTrack>()
+            var queryError: String? = null
             val collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
             val projection = arrayOf(
                 MediaStore.Audio.Media._ID,
@@ -206,13 +207,14 @@ fun OfflineMusicScreen(navController: NavController) {
                     }
                 }
             } catch (error: SecurityException) {
-                loadError = "Allow audio access to scan music on this device."
+                queryError = "Allow audio access to scan music on this device."
             } catch (error: Exception) {
-                loadError = error.localizedMessage ?: "Unable to read audio files."
+                queryError = error.localizedMessage ?: "Unable to read audio files."
             }
-            loaded
+            loaded to queryError
         }
         tracks = result
+        loadError = errorMessage
         loading = false
     }
 
