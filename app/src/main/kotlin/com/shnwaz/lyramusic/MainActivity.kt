@@ -213,9 +213,8 @@ import com.shnwaz.lyramusic.ui.component.EXPANDED_ANCHOR
 import com.shnwaz.lyramusic.ui.component.FloatingNavigationToolbar
 import com.shnwaz.lyramusic.ui.component.LocalBackdrop
 import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
-import com.shnwaz.lyramusic.ui.component.LocalScreenBackdrop
-import com.shnwaz.lyramusic.ui.component.ScreenGlassBackground
-import com.shnwaz.lyramusic.ui.component.rememberScreenBackdrop
+import com.shnwaz.lyramusic.ui.component.GlassTheme
+import com.shnwaz.lyramusic.ui.component.GlassThemeKey
 import com.shnwaz.lyramusic.ui.component.layerBackdrop
 import com.shnwaz.lyramusic.ui.component.rememberGlassBackdrop
 import com.shnwaz.lyramusic.ui.component.IconButton
@@ -1105,12 +1104,11 @@ class MainActivity : ComponentActivity() {
 
 
                     val glassBackdrop = rememberGlassBackdrop()
-                    val screenBackdrop = rememberScreenBackdrop()
+                    val (glassTheme) = rememberEnumPreference(GlassThemeKey, GlassTheme.LIQUID)
 
                     CompositionLocalProvider(
-                        LocalBackdrop provides glassBackdrop,
+                        LocalBackdrop provides (if (liquidGlassNavBar && glassTheme == GlassTheme.LIQUID) glassBackdrop else null),
                         LocalLiquidGlassEnabled provides liquidGlassNavBar,
-                        LocalScreenBackdrop provides (if (liquidGlassNavBar) screenBackdrop else null),
                         LocalDatabase provides database,
                         LocalContentColor provides if (pureBlack) Color.White else contentColorFor(MaterialTheme.colorScheme.surface),
                         LocalPlayerConnection provides playerConnection,
@@ -1611,9 +1609,6 @@ class MainActivity : ComponentActivity() {
                                     .nestedScroll(searchBarScrollBehavior.nestedScrollConnection)
                             ) {
                             Box(modifier = Modifier.fillMaxSize().layerBackdrop(glassBackdrop)) {
-                            if (liquidGlassNavBar) {
-                                ScreenGlassBackground(backdrop = screenBackdrop)
-                            }
                                 NavHost(
                                     navController = navController,
                                     startDestination = when (tabOpenedFromShortcut ?: defaultOpenTab) {
