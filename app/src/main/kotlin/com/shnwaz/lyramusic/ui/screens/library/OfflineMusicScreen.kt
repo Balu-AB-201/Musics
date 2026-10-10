@@ -14,6 +14,8 @@ import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,9 +68,7 @@ import com.shnwaz.lyramusic.di.LyricsHelperEntryPoint
 import com.shnwaz.lyramusic.db.entities.LyricsEntity.Companion.LYRICS_NOT_FOUND
 import com.shnwaz.lyramusic.lyrics.LyricsHelper
 import com.shnwaz.lyramusic.models.MediaMetadata as AppMediaMetadata
-import com.shnwaz.lyramusic.ui.component.LocalBackdrop
 import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
-import com.shnwaz.lyramusic.ui.component.phoneXGlass
 import com.shnwaz.lyramusic.playback.queues.ListQueue
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
@@ -145,7 +146,6 @@ fun OfflineMusicScreen(navController: NavController) {
     var minimumDurationSeconds by remember { mutableStateOf(0L) }
     var durationMenuExpanded by remember { mutableStateOf(false) }
     val liquidGlassEnabled = LocalLiquidGlassEnabled.current
-    val glassBackdrop = LocalBackdrop.current
     var lyricsTrack by remember { mutableStateOf<DeviceAudioTrack?>(null) }
     var lyricsText by remember { mutableStateOf("") }
     var lyricsLoading by remember { mutableStateOf(false) }
@@ -263,14 +263,23 @@ fun OfflineMusicScreen(navController: NavController) {
             Column(modifier = Modifier.weight(1f)) {
                 Text("On-device music", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
                 Text(
-                    if (hasPermission) "${tracks.size} tracks on this device" else "Play music stored on your phone or SD card",
+                    if (hasPermission) "Showing ${sortedTracks.size} of ${tracks.size} tracks" else "Play music stored on your phone or SD card",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+        // Keep controls on their own horizontally scrollable row on narrow phones.
+        Row(
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(bottom = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
             Box {
-                IconButton(onClick = { sortMenuExpanded = true }, enabled = hasPermission && !loading) {
-                    Icon(Icons.AutoMirrored.Outlined.Sort, contentDescription = "Sort offline music")
+                TextButton(onClick = { sortMenuExpanded = true }, enabled = hasPermission && !loading) {
+                    Icon(Icons.AutoMirrored.Outlined.Sort, contentDescription = null, modifier = Modifier.size(18.dp))
+                    androidx.compose.foundation.layout.Spacer(Modifier.size(6.dp))
+                    Text("Sort")
                 }
                 DropdownMenu(expanded = sortMenuExpanded, onDismissRequest = { sortMenuExpanded = false }) {
                     OfflineSort.entries.forEach { option ->
@@ -282,19 +291,9 @@ fun OfflineMusicScreen(navController: NavController) {
                     }
                 }
             }
-            IconButton(
-                enabled = sortedTracks.isNotEmpty() && playerConnection != null,
-                onClick = {
-                    playerConnection?.playQueue(
-                        ListQueue(title = "On-device music · Shuffle", items = sortedTracks.shuffled().map { it.toMediaItem() }),
-                    )
-                },
-            ) {
-                Icon(Icons.Outlined.Shuffle, contentDescription = "Shuffle offline music")
-            }
             Box {
                 TextButton(onClick = { durationMenuExpanded = true }, enabled = hasPermission && !loading) {
-                    Text(if (minimumDurationSeconds == 0L) "Min length" else "Min ${minimumDurationSeconds}s")
+                    Text(if (minimumDurationSeconds == 0L) "Min: Off" else "Min: ${minimumDurationSeconds}s")
                 }
                 DropdownMenu(expanded = durationMenuExpanded, onDismissRequest = { durationMenuExpanded = false }) {
                     listOf(0L, 15L, 30L, 60L, 90L, 120L).forEach { seconds ->
@@ -305,11 +304,28 @@ fun OfflineMusicScreen(navController: NavController) {
                     }
                 }
             }
+            TextButton(
+                enabled = sortedTracks.isNotEmpty() && playerConnection != null,
+                onClick = {
+                    playerConnection?.playQueue(
+                        ListQueue(title = "On-device music · Shuffle", items = sortedTracks.shuffled().map { it.toMediaItem() }),
+                    )
+                },
+            ) {
+                Icon(Icons.Outlined.Shuffle, contentDescription = null, modifier = Modifier.size(18.dp))
+                androidx.compose.foundation.layout.Spacer(Modifier.size(6.dp))
+                Text("Shuffle")
+            }
             TextButton(enabled = hasPermission && !loading, onClick = { coroutineScope.launch { loadTracks() } }) {
                 Text("Refresh")
             }
         }
-        Text("Sort: ${sort.label} · Minimum: ${if (minimumDurationSeconds == 0L) "off" else "${minimumDurationSeconds}s"}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(bottom = 8.dp))
+        Text(
+            "Sort: ${sort.label} · Minimum duration: ${if (minimumDurationSeconds == 0L) "off" else "${minimumDurationSeconds}s"}",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
 
         when {
             !hasPermission -> Surface(
@@ -347,15 +363,21 @@ fun OfflineMusicScreen(navController: NavController) {
                 items(sortedTracks, key = { it.id }) { track ->
                     Surface(
                         modifier = Modifier.fillMaxWidth()
-                            .then(if (liquidGlassEnabled && glassBackdrop != null) Modifier.phoneXGlass(glassBackdrop, RoundedCornerShape(16.dp)) else Modifier)
+                            .then(
+                                if (liquidGlassEnabled) Modifier.border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.28f),
+                                    shape = RoundedCornerShape(16.dp),
+                                ) else Modifier,
+                            )
                             .clickable {
-                            val connection = playerConnection ?: return@clickable
-                            val queueItems = sortedTracks.map { it.toMediaItem() }
-                            val index = sortedTracks.indexOfFirst { it.id == track.id }.coerceAtLeast(0)
-                            connection.playQueue(ListQueue(title = "On-device music", items = queueItems, startIndex = index))
-                        },
+                                val connection = playerConnection ?: return@clickable
+                                val queueItems = sortedTracks.map { it.toMediaItem() }
+                                val index = sortedTracks.indexOfFirst { it.id == track.id }.coerceAtLeast(0)
+                                connection.playQueue(ListQueue(title = "On-device music", items = queueItems, startIndex = index))
+                            },
                         shape = RoundedCornerShape(16.dp),
-                        color = if (liquidGlassEnabled && glassBackdrop != null) androidx.compose.ui.graphics.Color.Transparent else MaterialTheme.colorScheme.surfaceContainerLow,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = if (liquidGlassEnabled) 0.82f else 1f),
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
@@ -365,9 +387,7 @@ fun OfflineMusicScreen(navController: NavController) {
                             AsyncImage(
                                 model = track.artworkUri,
                                 contentDescription = "Album artwork for ${track.title}",
-                                modifier = Modifier.size(54.dp).clip(RoundedCornerShape(10.dp)).then(
-                                    if (liquidGlassEnabled && glassBackdrop != null) Modifier.phoneXGlass(glassBackdrop, RoundedCornerShape(10.dp), lite = true) else Modifier,
-                                ),
+                                modifier = Modifier.size(54.dp).clip(RoundedCornerShape(10.dp)),
                                 contentScale = ContentScale.Crop,
                             )
                             Column(modifier = Modifier.weight(1f)) {
