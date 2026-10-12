@@ -266,6 +266,7 @@ class MusicService :
     private val binder = MusicBinder()
     private var hasBoundClients = false
     private var idleStopJob: Job? = null
+    private var networkRecoveryJob: Job? = null
 
     private lateinit var connectivityManager: ConnectivityManager
     lateinit var connectivityObserver: NetworkConnectivityObserver
@@ -1461,6 +1462,26 @@ class MusicService :
 
     private fun waitOnNetworkError() {
         waitingForNetworkConnection.value = true
+
+        // A transient stream timeout can happen while Android still reports an active
+        // network. In that case the connectivity observer will not emit a new
+        // connected event, so playback would remain stuck in STATE_IDLE indefinitely.
+        networkRecoveryJob?.cancel()
+        networkRecoveryJob = scope.launch(SilentHandler) {
+            delay(1800)
+            if (!waitingForNetworkConnection.value) return@launch
+            if (!isNetworkConnected.value) return@launch
+            if (!player.playWhenReady || player.currentMediaItem == null) {
+                waitingForNetworkConnection.value = false
+                return@launch
+            }
+
+            waitingForNetworkConnection.value = false
+            if (player.playbackState == Player.STATE_IDLE || player.playbackState == Player.STATE_ENDED) {
+                player.prepare()
+                player.play()
+            }
+        }
     }
 
     private fun skipOnError() {
