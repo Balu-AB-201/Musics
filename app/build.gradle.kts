@@ -185,7 +185,7 @@ ksp {
 }
 
 dependencies {
-	implementation("io.github.kyant0:backdrop:1.0.3")
+	implementation("io.github.kyant0:backdrop:2.0.1")
     implementation(libs.guava)
     implementation(libs.coroutines.guava)
     implementation(libs.concurrent.futures)
