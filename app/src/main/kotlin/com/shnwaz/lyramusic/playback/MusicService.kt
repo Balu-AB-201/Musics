@@ -522,7 +522,7 @@ class MusicService :
                     )
 
                 NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.vlc_music_logo_monochrome)
+                    .setSmallIcon(R.drawable.ic_notification_small)
                     .setContentTitle(getString(R.string.app_name))
                     .setContentText(getString(R.string.app_name))
                     .setContentIntent(contentIntent)
