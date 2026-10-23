@@ -28,6 +28,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -65,6 +66,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
@@ -254,6 +256,9 @@ fun PlayerTopActions(
                 topEnd = 50.dp, bottomEnd = 50.dp
             )
 
+            var shareFocused by remember { mutableStateOf(false) }
+            var favoriteFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -261,6 +266,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, shareShape)
                         .clip(shareShape)
                         .background(textButtonColor)
                         .clickable {
@@ -288,6 +295,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, favShape)
                         .clip(favShape)
                         .background(textButtonColor)
                         .clickable {
@@ -311,6 +320,9 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V3, PlayerDesignStyle.V5 -> {
+            var shareFocused by remember { mutableStateOf(false) }
+            var favoriteFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -318,6 +330,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .clickable {
                             val intent = Intent().apply {
@@ -342,6 +356,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .clickable { playerConnection.toggleLike() },
                     contentAlignment = Alignment.Center
