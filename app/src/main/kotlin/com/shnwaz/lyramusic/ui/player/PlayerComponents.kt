@@ -483,10 +483,15 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V1 -> {
+            var shareFocused by remember { mutableStateOf(false) }
+            var moreFocused by remember { mutableStateOf(false) }
+
             Box(
                 modifier =
                     Modifier
                         .size(40.dp)
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp))
                         .clip(RoundedCornerShape(24.dp))
                         .background(textButtonColor)
                         .clickable {
@@ -520,6 +525,8 @@ fun PlayerTopActions(
                 modifier =
                     Modifier
                         .size(40.dp)
+                        .onFocusChanged { moreFocused = it.isFocused }
+                        .border(if (moreFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp))
                         .clip(RoundedCornerShape(24.dp))
                         .background(textButtonColor)
                         .clickable {
@@ -659,6 +666,9 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V7, PlayerDesignStyle.V8 -> {
+            var favoriteFocused by remember { mutableStateOf(false) }
+            var moreFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -666,6 +676,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                         .glassControl(
                             shape = CircleShape,
                             tint = if (currentSongLiked) MaterialTheme.colorScheme.error.copy(alpha = 0.30f)
@@ -693,6 +705,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .onFocusChanged { moreFocused = it.isFocused }
+                        .border(if (moreFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                         .glassControl(CircleShape, Color.White.copy(alpha = 0.08f))
                         .clip(CircleShape)
                         .clickable {
