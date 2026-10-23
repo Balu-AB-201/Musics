@@ -301,6 +301,7 @@ class MainActivity : ComponentActivity() {
                     playerConnection =
                         PlayerConnection(this@MainActivity, service, database, lifecycleScope)
                     playPendingDeepLinkSongIfReady()
+                    playPendingVoiceSearchIfReady()
                     joinPendingTogetherIfReady()
                 }
             }
@@ -315,6 +316,58 @@ class MainActivity : ComponentActivity() {
     private data class PendingDeepLinkSong(
         val mediaItem: MediaItem,
     )
+
+    private var pendingVoiceSearch: String? = null
+
+    private fun isVoicePlaybackIntent(intent: Intent): Boolean =
+        intent.action == android.media.action.MEDIA_PLAY_FROM_SEARCH ||
+            intent.action == "android.media.action.MEDIA_PLAY_FROM_SEARCH"
+
+    private fun voicePlaybackQuery(intent: Intent): String =
+        intent.getStringExtra(android.app.SearchManager.QUERY)
+            ?.trim()
+            .orEmpty()
+            .ifBlank { intent.getStringExtra("query")?.trim().orEmpty() }
+
+    private fun playPendingVoiceSearchIfReady() {
+        val query = pendingVoiceSearch ?: return
+        val connection = playerConnection ?: return
+        pendingVoiceSearch = null
+        lifecycleScope.launch {
+            val normalized = query.trim()
+            val offlineOnly = normalized.contains("offline", ignoreCase = true) ||
+                normalized.contains("downloaded", ignoreCase = true) ||
+                normalized.contains("local music", ignoreCase = true)
+            val searchText = normalized
+                .replace(Regex("\\b(my|downloaded|offline|local|music|songs?|please|play|in|vlc|musics?)\\b", RegexOption.IGNORE_CASE), " ")
+                .replace(Regex("\\s+"), " ")
+                .trim()
+            val localMatch = withContext(Dispatchers.IO) {
+                if (searchText.isBlank()) {
+                    database.songsByCreateDateAsc().first().firstOrNull()
+                } else {
+                    database.searchSongs(searchText, previewSize = 1).first().firstOrNull()
+                }
+            }
+            val onlineMatch = if (localMatch == null && !offlineOnly) {
+                withContext(Dispatchers.IO) {
+                    val onlineQuery = searchText.ifBlank { "popular music" }
+                    YouTube.search(onlineQuery, YouTube.SearchFilter.FILTER_SONG)
+                        .getOrNull()?.items?.filterIsInstance<SongItem>()?.firstOrNull()
+                }
+            } else null
+            val item = localMatch?.toMediaItem() ?: onlineMatch?.toMediaItem()
+            if (item != null) {
+                connection.playQueue(ListQueue(items = listOf(item)))
+            } else {
+                android.widget.Toast.makeText(
+                    this@MainActivity,
+                    if (offlineOnly) "No matching downloaded song was found" else "No matching song was found",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
 
     private fun playPendingDeepLinkSongIfReady() {
         val pending = pendingDeepLinkSong ?: return
@@ -397,6 +450,11 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        if (isVoicePlaybackIntent(intent)) {
+            pendingVoiceSearch = voicePlaybackQuery(intent)
+            playPendingVoiceSearchIfReady()
+            return
+        }
         if (::navController.isInitialized) {
             handleDeepLinkIntent(intent, navController)
         } else {
@@ -409,6 +467,9 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (isVoicePlaybackIntent(intent)) {
+            pendingVoiceSearch = voicePlaybackQuery(intent)
+        }
         window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.statusBarColor = android.graphics.Color.TRANSPARENT

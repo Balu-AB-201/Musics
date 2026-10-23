@@ -50,6 +50,12 @@
             android:launchMode="singleTask"
             android:theme="@style/Theme.LyraMusic"
             android:windowSoftInputMode="adjustResize">
+            <!-- Android voice assistants can target this standard media-search action. -->
+            <intent-filter>
+                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
