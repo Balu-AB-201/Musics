@@ -752,6 +752,7 @@ fun PlayerSlider(
 ) {
     val safeDuration = if (duration <= 0L) 0f else duration.toFloat()
     val safeValue = (sliderPosition ?: position).toFloat().coerceIn(0f, maxOf(0f, safeDuration))
+    var sliderFocused by remember { mutableStateOf(false) }
 
     StyledPlaybackSlider(
         sliderStyle = sliderStyle,
@@ -761,7 +762,14 @@ fun PlayerSlider(
         onValueChangeFinished = onValueChangeFinished,
         activeColor = textButtonColor,
         isPlaying = isPlaying,
-        modifier = Modifier.padding(horizontal = PlayerHorizontalPadding)
+        modifier = Modifier
+            .padding(horizontal = PlayerHorizontalPadding)
+            .onFocusChanged { sliderFocused = it.isFocused }
+            .border(
+                width = if (sliderFocused) 2.dp else 0.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(12.dp)
+            )
     )
 }
 
