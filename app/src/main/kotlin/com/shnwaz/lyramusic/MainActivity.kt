@@ -757,13 +757,6 @@ class MainActivity : ComponentActivity() {
 
                     val searchBarFocusRequester = remember { FocusRequester() }
 
-                    LaunchedEffect(useRail, shouldShowNavigationBar) {
-                        if (useRail && shouldShowNavigationBar) {
-                            kotlinx.coroutines.yield()
-                            runCatching { tvNavigationFocusRequester.requestFocus() }
-                        }
-                    }
-
                     val onSearch: (String) -> Unit = {
                         if (it.isNotEmpty()) {
                             onActiveChange(false)
@@ -793,6 +786,13 @@ class MainActivity : ComponentActivity() {
                                     navigationItems.fastAny { it.route == navBackStackEntry?.destination?.route } &&
                                     !active
                         }
+
+                    LaunchedEffect(useRail, shouldShowNavigationBar) {
+                        if (useRail && shouldShowNavigationBar) {
+                            kotlinx.coroutines.yield()
+                            runCatching { tvNavigationFocusRequester.requestFocus() }
+                        }
+                    }
 
                     val shouldShowHomeShuffleButton =
                         currentRoute == Screens.Home.route &&
