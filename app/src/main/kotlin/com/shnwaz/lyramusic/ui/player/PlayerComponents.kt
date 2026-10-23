@@ -378,6 +378,10 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V4 -> {
+            var shareFocused by remember { mutableStateOf(false) }
+            var favoriteFocused by remember { mutableStateOf(false) }
+            var moreFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -397,6 +401,8 @@ fun PlayerTopActions(
                     shape = RoundedCornerShape(14.dp),
                     color = textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp))
                         .height(44.dp)
                         .width(44.dp)
                 ) {
@@ -417,6 +423,8 @@ fun PlayerTopActions(
                         MaterialTheme.colorScheme.error.copy(alpha = 0.25f)
                     else textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp))
                         .height(44.dp)
                         .width(44.dp)
                 ) {
@@ -457,6 +465,8 @@ fun PlayerTopActions(
                     shape = RoundedCornerShape(14.dp),
                     color = textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { moreFocused = it.isFocused }
+                        .border(if (moreFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp))
                         .height(44.dp)
                         .width(44.dp)
                 ) {
@@ -539,6 +549,10 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V6 -> {
+            var shareFocused by remember { mutableStateOf(false) }
+            var favoriteFocused by remember { mutableStateOf(false) }
+            var moreFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -561,6 +575,8 @@ fun PlayerTopActions(
                     ),
                     color = textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(topStart = 50.dp, bottomStart = 50.dp, topEnd = 6.dp, bottomEnd = 6.dp))
                         .height(42.dp)
                         .width(42.dp)
                 ) {
@@ -581,6 +597,8 @@ fun PlayerTopActions(
                         MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
                     else textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                         .height(42.dp)
                         .width(42.dp)
                 ) {
@@ -623,6 +641,8 @@ fun PlayerTopActions(
                     ),
                     color = textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { moreFocused = it.isFocused }
+                        .border(if (moreFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(topStart = 6.dp, bottomStart = 6.dp, topEnd = 50.dp, bottomEnd = 50.dp))
                         .height(42.dp)
                         .width(42.dp)
                 ) {
