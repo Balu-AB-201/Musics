@@ -36,6 +36,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -102,6 +103,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -1136,8 +1138,22 @@ class MainActivity : ComponentActivity() {
                                     navigationItems.fastForEach { screen ->
                                         val isSelected =
                                             navBackStackEntry?.destination?.hierarchy?.any { it.route == screen.route } == true
+                                        var isTvFocused by remember { mutableStateOf(false) }
 
                                         NavigationRailItem(
+                                            modifier = Modifier
+                                                .onFocusChanged { isTvFocused = it.isFocused }
+                                                .then(
+                                                    if (isTvFocused) {
+                                                        Modifier.border(
+                                                            width = 2.dp,
+                                                            color = MaterialTheme.colorScheme.primary,
+                                                            shape = RoundedCornerShape(16.dp),
+                                                        )
+                                                    } else {
+                                                        Modifier
+                                                    }
+                                                ),
                                             selected = isSelected,
                                             icon = {
                                                 Icon(
