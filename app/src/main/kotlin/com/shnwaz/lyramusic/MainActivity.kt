@@ -702,6 +702,7 @@ class MainActivity : ComponentActivity() {
                     val allYtItems by homeViewModel.allYtItems.collectAsState()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val navigationItems = remember { Screens.MainScreens }
+                    val tvNavigationFocusRequester = remember { FocusRequester() }
                     val currentRoute = navBackStackEntry?.destination?.route
                     val isYearInMusicScreen = currentRoute == "year_in_music"
 
@@ -755,6 +756,13 @@ class MainActivity : ComponentActivity() {
                     var searchSource by rememberEnumPreference(SearchSourceKey, SearchSource.ONLINE)
 
                     val searchBarFocusRequester = remember { FocusRequester() }
+
+                    LaunchedEffect(useRail, shouldShowNavigationBar) {
+                        if (useRail && shouldShowNavigationBar) {
+                            kotlinx.coroutines.yield()
+                            runCatching { tvNavigationFocusRequester.requestFocus() }
+                        }
+                    }
 
                     val onSearch: (String) -> Unit = {
                         if (it.isNotEmpty()) {
@@ -1142,6 +1150,13 @@ class MainActivity : ComponentActivity() {
 
                                         NavigationRailItem(
                                             modifier = Modifier
+                                                .then(
+                                                    if (screen == navigationItems.firstOrNull()) {
+                                                        Modifier.focusRequester(tvNavigationFocusRequester)
+                                                    } else {
+                                                        Modifier
+                                                    }
+                                                )
                                                 .onFocusChanged { isTvFocused = it.isFocused }
                                                 .then(
                                                     if (isTvFocused) {
