@@ -8,6 +8,8 @@
 
 package com.shnwaz.lyramusic.ui.player
 
+import com.shnwaz.lyramusic.ui.component.remoteFocusOutline
+
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -171,13 +173,15 @@ private fun ClassicMiniPlayer(
                     Text(song.artists.joinToString { it.name }, maxLines = 1, overflow = TextOverflow.Ellipsis, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
             } ?: Spacer(Modifier.weight(1f))
-            IconButton(onClick = {
+            IconButton(modifier = Modifier.remoteFocusOutline(),
+onClick = {
                 if (playbackState == Player.STATE_ENDED) playerConnection.player.seekTo(0, 0)
                 playerConnection.player.togglePlayPause()
             }) {
                 Icon(painterResource(if (isPlaying) R.drawable.pause else R.drawable.play), null)
             }
-            IconButton(onClick = playerConnection::seekToNext, enabled = canSkipNext) {
+            IconButton(modifier = Modifier.remoteFocusOutline(),
+onClick = playerConnection::seekToNext, enabled = canSkipNext) {
                 Icon(painterResource(R.drawable.skip_next), null)
             }
             }
@@ -259,7 +263,8 @@ private fun AppleMiniPlayer(
                     Box(Modifier.fillMaxWidth(progress).height(2.dp).background(MaterialTheme.colorScheme.primary))
                 }
             }
-            IconButton(onClick = playerConnection::seekToNext, enabled = canSkipNext) {
+            IconButton(modifier = Modifier.remoteFocusOutline(),
+onClick = playerConnection::seekToNext, enabled = canSkipNext) {
                 Icon(painterResource(R.drawable.skip_next), null)
             }
             }
