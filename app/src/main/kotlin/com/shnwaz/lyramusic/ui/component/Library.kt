@@ -10,13 +10,23 @@ package com.shnwaz.lyramusic.ui.component
 
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.fillMaxWidth
 import com.shnwaz.lyramusic.ui.component.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.shnwaz.lyramusic.R
@@ -30,6 +40,20 @@ import com.shnwaz.lyramusic.ui.menu.ArtistMenu
 import com.shnwaz.lyramusic.ui.menu.PlaylistMenu
 import com.shnwaz.lyramusic.ui.menu.YouTubePlaylistMenu
 import kotlinx.coroutines.CoroutineScope
+
+
+/** Visible focus feedback for remote navigation on Android TV. */
+@Composable
+private fun Modifier.tvLibraryFocusOutline(): Modifier {
+    var isFocused by remember { mutableStateOf(false) }
+    return this
+        .onFocusChanged { isFocused = it.isFocused }
+        .border(
+            width = if (isFocused) 2.dp else 0.dp,
+            color = if (isFocused) MaterialTheme.colorScheme.primary else Color.Transparent,
+            shape = RoundedCornerShape(16.dp),
+        )
+}
 
 @Composable
 fun LibraryArtistListItem(
@@ -60,6 +84,7 @@ fun LibraryArtistListItem(
     },
     modifier = modifier
         .fillMaxWidth()
+        .tvLibraryFocusOutline()
         .clickable {
             navController.navigate("artist/${artist.id}")
         }
@@ -78,6 +103,7 @@ fun LibraryArtistGridItem(
     fillMaxWidth = true,
     modifier = modifier
         .fillMaxWidth()
+        .tvLibraryFocusOutline()
         .combinedClickable(
             onClick = {
                 navController.navigate("artist/${artist.id}")
@@ -251,6 +277,7 @@ fun LibraryPlaylistListItem(
         trailingContent = trailing,
         modifier = modifier
             .fillMaxWidth()
+            .tvLibraryFocusOutline()
             .clickable(onClick = openPlaylist),
     )
 }
