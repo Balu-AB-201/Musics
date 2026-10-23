@@ -68,6 +68,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
@@ -918,6 +919,19 @@ fun PlayerTimeLabel(
     }
 }
 
+
+/** Adds a clear focus ring to player controls navigated with a TV remote. */
+private fun Modifier.remoteFocusOutline() = composed {
+    var remoteFocused by remember { mutableStateOf(false) }
+    this
+        .onFocusChanged { remoteFocused = it.isFocused }
+        .border(
+            width = if (remoteFocused) 2.dp else 0.dp,
+            color = MaterialTheme.colorScheme.primary,
+            shape = RoundedCornerShape(14.dp)
+        )
+}
+
 @Composable
 fun PlayerPlaybackControls(
     playerDesignStyle: PlayerDesignStyle,
@@ -1049,7 +1063,9 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(40.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(10.dp))
+                            .remoteFocusOutline()
                             .clickable {
                                 playerConnection.player.shuffleModeEnabled = !shuffleModeEnabled
                             },
@@ -1068,6 +1084,7 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(52.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(14.dp))
                             .background(textBackgroundColor.copy(alpha = 0.08f))
                             .clickable(enabled = canSkipPrevious) {
@@ -1086,6 +1103,7 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(70.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(50))
                             .background(textBackgroundColor)
                             .clickable {
@@ -1122,6 +1140,7 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(52.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(14.dp))
                             .background(textBackgroundColor.copy(alpha = 0.08f))
                             .clickable(enabled = canSkipNext) {
@@ -1140,7 +1159,9 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(40.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(10.dp))
+                            .remoteFocusOutline()
                             .clickable { playerConnection.player.toggleRepeatMode() },
                         contentAlignment = Alignment.Center
                     ) {
@@ -1666,6 +1687,7 @@ fun PlayerPlaybackControls(
                     color = Color.Transparent,
                     modifier = Modifier
                         .size(64.dp)
+                        .remoteFocusOutline()
                         .glassControl(CircleShape, Color.White.copy(alpha = 0.08f))
                 ) {
                     Box(
@@ -1696,6 +1718,7 @@ fun PlayerPlaybackControls(
                     color = Color.Transparent,
                     modifier = Modifier
                         .size(72.dp)
+                        .remoteFocusOutline()
                         .glassControl(CircleShape, Color.White.copy(alpha = 0.16f))
                 ) {
                     Box(
@@ -1731,6 +1754,7 @@ fun PlayerPlaybackControls(
                     color = Color.Transparent,
                     modifier = Modifier
                         .size(64.dp)
+                        .remoteFocusOutline()
                         .glassControl(CircleShape, Color.White.copy(alpha = 0.08f))
                 ) {
                     Box(
