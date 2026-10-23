@@ -320,8 +320,7 @@ class MainActivity : ComponentActivity() {
     private var pendingVoiceSearch: String? = null
 
     private fun isVoicePlaybackIntent(intent: Intent): Boolean =
-        intent.action == android.media.action.MEDIA_PLAY_FROM_SEARCH ||
-            intent.action == "android.media.action.MEDIA_PLAY_FROM_SEARCH"
+        intent.action == "android.media.action.MEDIA_PLAY_FROM_SEARCH"
 
     private fun voicePlaybackQuery(intent: Intent): String =
         intent.getStringExtra(android.app.SearchManager.QUERY)
