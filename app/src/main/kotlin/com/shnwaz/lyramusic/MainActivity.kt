@@ -854,7 +854,10 @@ class MainActivity : ComponentActivity() {
                             useRail || (isMainDestination && !active)
                         }
 
-                    LaunchedEffect(useRail, shouldShowNavigationBar) {
+                    LaunchedEffect(useRail) {
+                        // Request initial rail focus only when TV rail mode is entered.
+                        // Re-requesting on every destination change steals D-pad focus
+                        // from newly opened screens and their controls.
                         if (useRail && shouldShowNavigationBar) {
                             kotlinx.coroutines.yield()
                             runCatching { tvNavigationFocusRequester.requestFocus() }
