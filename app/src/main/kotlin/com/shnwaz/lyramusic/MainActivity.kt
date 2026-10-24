@@ -842,9 +842,17 @@ class MainActivity : ComponentActivity() {
 
                     val shouldShowNavigationBar =
                         remember(navBackStackEntry, active) {
-                            navBackStackEntry?.destination?.route == null ||
-                                    navigationItems.fastAny { it.route == navBackStackEntry?.destination?.route } &&
-                                    !active
+                            val route = navBackStackEntry?.destination?.route
+                            val isMainDestination =
+                                route == null ||
+                                    navigationItems.fastAny { it.route == route }
+                            // Keep the primary rail available while navigating Settings subpages.
+                            // TV users should not lose their main navigation just because a
+                            // preference opened a nested destination.
+                            val isSettingsDestination =
+                                route == "settings" ||
+                                    route?.startsWith("settings/") == true
+                            (isMainDestination || (useRail && isSettingsDestination)) && !active
                         }
 
                     LaunchedEffect(useRail, shouldShowNavigationBar) {
