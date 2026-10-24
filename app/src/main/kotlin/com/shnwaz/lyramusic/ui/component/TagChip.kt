@@ -12,6 +12,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -116,7 +117,7 @@ fun TagChip(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
                 .then(
-                    if (onClick != null) Modifier.clickable(onClick = onClick)
+                    if (onClick != null) Modifier.clickable(onClick = onClick).focusable().remoteFocusOutline(RoundedCornerShape(20.dp))
                     else Modifier
                 )
                 .padding(
