@@ -12,6 +12,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -115,6 +116,7 @@ fun TopSearch(
         animationSpec = tween(durationMillis = AnimationDurationMillis),
         label = "SearchBarAnimation",
     )
+    val inputFocused = interactionSource.collectIsFocusedAsState().value
 
     val defaultInputFieldShape = SearchBarDefaults.inputFieldShape
     val defaultFullScreenShape = SearchBarDefaults.fullScreenShape
@@ -196,7 +198,12 @@ fun TopSearch(
                     start = startPadding,
                     end = endPadding,
                 )
-                .size(width = width, height = height),
+                .size(width = width, height = height)
+                .border(
+                    width = if (inputFocused) 2.dp else 0.dp,
+                    color = if (inputFocused) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    shape = animatedShape,
+                ),
         ) {
             Column {
                 SearchBarInputField(

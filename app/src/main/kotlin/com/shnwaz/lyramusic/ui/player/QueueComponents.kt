@@ -10,6 +10,8 @@
 
 package com.shnwaz.lyramusic.ui.player
 
+import com.shnwaz.lyramusic.ui.component.remoteFocusOutline
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -174,7 +176,7 @@ fun CurrentSongHeader(
 
             IconButton(
                 onClick = onToggleLike,
-                modifier = Modifier.size(44.dp),
+                modifier = Modifier.remoteFocusOutline().size(44.dp),
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = if (mediaMetadata?.liked == true)
                         MaterialTheme.colorScheme.primary
@@ -209,7 +211,7 @@ fun CurrentSongHeader(
             ) {
                 IconButton(
                     onClick = onLockClick,
-                    modifier = Modifier.size(40.dp),
+                    modifier = Modifier.remoteFocusOutline().size(40.dp),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = onBackgroundColor.copy(alpha = 0.7f)
                     )
@@ -222,7 +224,7 @@ fun CurrentSongHeader(
                 }
                 IconButton(
                     onClick = onMenuClick,
-                    modifier = Modifier.size(40.dp),
+                    modifier = Modifier.remoteFocusOutline().size(40.dp),
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = onBackgroundColor.copy(alpha = 0.7f)
                     )

@@ -14,6 +14,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -105,6 +106,7 @@ fun PreferenceEntry(
                     enabled = isEnabled && onClick != null,
                     onClick = onClick ?: {},
                 )
+                .then(if (onClick != null) Modifier.focusable(enabled = isEnabled).remoteFocusOutline(RoundedCornerShape(16.dp)) else Modifier)
                 .alpha(if (isEnabled) 1f else 0.5f)
                 .padding(horizontal = 16.dp, vertical = 14.dp),
         ) {

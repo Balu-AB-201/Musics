@@ -11,6 +11,7 @@ package com.shnwaz.lyramusic.ui.component
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.shnwaz.lyramusic.ui.component.remoteFocusOutline
 
 @Composable
 fun NavigationTile(
@@ -46,6 +48,8 @@ fun NavigationTile(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
+            .focusable()
+            .remoteFocusOutline(RoundedCornerShape(12.dp))
             .semantics { role = Role.Button }
             .padding(6.dp),
     ) {

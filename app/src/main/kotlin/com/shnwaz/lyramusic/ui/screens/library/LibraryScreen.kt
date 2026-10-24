@@ -39,6 +39,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import com.shnwaz.lyramusic.ui.component.Icon
+import com.shnwaz.lyramusic.ui.component.remoteFocusOutline
 import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
 import com.shnwaz.lyramusic.ui.component.glassBubble
 import com.shnwaz.lyramusic.ui.component.tvFocus
@@ -460,7 +461,9 @@ private fun PlaylistTagFilterChip(
                     interactionSource = interactionSource,
                     indication = null,
                     onClick = onClick,
-                ).padding(horizontal = 16.dp, vertical = 10.dp),
+                )
+                .remoteFocusOutline(CircleShape)
+                .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
@@ -559,7 +562,9 @@ fun ExpressiveTabChip(
                     interactionSource = interactionSource,
                     indication = null,
                     onClick = onClick,
-                ).padding(horizontal = 18.dp, vertical = 10.dp),
+                )
+                .remoteFocusOutline(CircleShape)
+                .padding(horizontal = 18.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {

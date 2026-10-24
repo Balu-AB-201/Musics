@@ -28,6 +28,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -65,7 +66,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
@@ -254,6 +257,9 @@ fun PlayerTopActions(
                 topEnd = 50.dp, bottomEnd = 50.dp
             )
 
+            var shareFocused by remember { mutableStateOf(false) }
+            var favoriteFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -261,6 +267,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, shareShape)
                         .clip(shareShape)
                         .background(textButtonColor)
                         .clickable {
@@ -288,6 +296,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, favShape)
                         .clip(favShape)
                         .background(textButtonColor)
                         .clickable {
@@ -311,6 +321,9 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V3, PlayerDesignStyle.V5 -> {
+            var shareFocused by remember { mutableStateOf(false) }
+            var favoriteFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -318,6 +331,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .clickable {
                             val intent = Intent().apply {
@@ -342,6 +357,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .clickable { playerConnection.toggleLike() },
                     contentAlignment = Alignment.Center
@@ -362,6 +379,10 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V4 -> {
+            var shareFocused by remember { mutableStateOf(false) }
+            var favoriteFocused by remember { mutableStateOf(false) }
+            var moreFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -381,6 +402,8 @@ fun PlayerTopActions(
                     shape = RoundedCornerShape(14.dp),
                     color = textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp))
                         .height(44.dp)
                         .width(44.dp)
                 ) {
@@ -401,6 +424,8 @@ fun PlayerTopActions(
                         MaterialTheme.colorScheme.error.copy(alpha = 0.25f)
                     else textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp))
                         .height(44.dp)
                         .width(44.dp)
                 ) {
@@ -441,6 +466,8 @@ fun PlayerTopActions(
                     shape = RoundedCornerShape(14.dp),
                     color = textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { moreFocused = it.isFocused }
+                        .border(if (moreFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp))
                         .height(44.dp)
                         .width(44.dp)
                 ) {
@@ -457,10 +484,15 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V1 -> {
+            var shareFocused by remember { mutableStateOf(false) }
+            var moreFocused by remember { mutableStateOf(false) }
+
             Box(
                 modifier =
                     Modifier
                         .size(40.dp)
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp))
                         .clip(RoundedCornerShape(24.dp))
                         .background(textButtonColor)
                         .clickable {
@@ -494,6 +526,8 @@ fun PlayerTopActions(
                 modifier =
                     Modifier
                         .size(40.dp)
+                        .onFocusChanged { moreFocused = it.isFocused }
+                        .border(if (moreFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp))
                         .clip(RoundedCornerShape(24.dp))
                         .background(textButtonColor)
                         .clickable {
@@ -523,6 +557,10 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V6 -> {
+            var shareFocused by remember { mutableStateOf(false) }
+            var favoriteFocused by remember { mutableStateOf(false) }
+            var moreFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -545,6 +583,8 @@ fun PlayerTopActions(
                     ),
                     color = textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { shareFocused = it.isFocused }
+                        .border(if (shareFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(topStart = 50.dp, bottomStart = 50.dp, topEnd = 6.dp, bottomEnd = 6.dp))
                         .height(42.dp)
                         .width(42.dp)
                 ) {
@@ -565,6 +605,8 @@ fun PlayerTopActions(
                         MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
                     else textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                         .height(42.dp)
                         .width(42.dp)
                 ) {
@@ -607,6 +649,8 @@ fun PlayerTopActions(
                     ),
                     color = textBackgroundColor.copy(alpha = 0.12f),
                     modifier = Modifier
+                        .onFocusChanged { moreFocused = it.isFocused }
+                        .border(if (moreFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(topStart = 6.dp, bottomStart = 6.dp, topEnd = 50.dp, bottomEnd = 50.dp))
                         .height(42.dp)
                         .width(42.dp)
                 ) {
@@ -623,6 +667,9 @@ fun PlayerTopActions(
         }
 
         PlayerDesignStyle.V7, PlayerDesignStyle.V8 -> {
+            var favoriteFocused by remember { mutableStateOf(false) }
+            var moreFocused by remember { mutableStateOf(false) }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -630,6 +677,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .onFocusChanged { favoriteFocused = it.isFocused }
+                        .border(if (favoriteFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                         .glassControl(
                             shape = CircleShape,
                             tint = if (currentSongLiked) MaterialTheme.colorScheme.error.copy(alpha = 0.30f)
@@ -657,6 +706,8 @@ fun PlayerTopActions(
                 Box(
                     modifier = Modifier
                         .size(42.dp)
+                        .onFocusChanged { moreFocused = it.isFocused }
+                        .border(if (moreFocused) 2.dp else 0.dp, MaterialTheme.colorScheme.primary, CircleShape)
                         .glassControl(CircleShape, Color.White.copy(alpha = 0.08f))
                         .clip(CircleShape)
                         .clickable {
@@ -702,6 +753,7 @@ fun PlayerSlider(
 ) {
     val safeDuration = if (duration <= 0L) 0f else duration.toFloat()
     val safeValue = (sliderPosition ?: position).toFloat().coerceIn(0f, maxOf(0f, safeDuration))
+    var sliderFocused by remember { mutableStateOf(false) }
 
     StyledPlaybackSlider(
         sliderStyle = sliderStyle,
@@ -711,7 +763,14 @@ fun PlayerSlider(
         onValueChangeFinished = onValueChangeFinished,
         activeColor = textButtonColor,
         isPlaying = isPlaying,
-        modifier = Modifier.padding(horizontal = PlayerHorizontalPadding)
+        modifier = Modifier
+            .padding(horizontal = PlayerHorizontalPadding)
+            .onFocusChanged { sliderFocused = it.isFocused }
+            .border(
+                width = if (sliderFocused) 2.dp else 0.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(12.dp)
+            )
     )
 }
 
@@ -860,6 +919,19 @@ fun PlayerTimeLabel(
     }
 }
 
+
+/** Adds a clear focus ring to player controls navigated with a TV remote. */
+private fun Modifier.remoteFocusOutline() = composed {
+    var remoteFocused by remember { mutableStateOf(false) }
+    this
+        .onFocusChanged { remoteFocused = it.isFocused }
+        .border(
+            width = if (remoteFocused) 2.dp else 0.dp,
+            color = MaterialTheme.colorScheme.primary,
+            shape = RoundedCornerShape(14.dp)
+        )
+}
+
 @Composable
 fun PlayerPlaybackControls(
     playerDesignStyle: PlayerDesignStyle,
@@ -991,7 +1063,9 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(40.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(10.dp))
+                            .remoteFocusOutline()
                             .clickable {
                                 playerConnection.player.shuffleModeEnabled = !shuffleModeEnabled
                             },
@@ -1010,6 +1084,7 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(52.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(14.dp))
                             .background(textBackgroundColor.copy(alpha = 0.08f))
                             .clickable(enabled = canSkipPrevious) {
@@ -1028,6 +1103,7 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(70.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(50))
                             .background(textBackgroundColor)
                             .clickable {
@@ -1064,6 +1140,7 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(52.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(14.dp))
                             .background(textBackgroundColor.copy(alpha = 0.08f))
                             .clickable(enabled = canSkipNext) {
@@ -1082,7 +1159,9 @@ fun PlayerPlaybackControls(
                     Box(
                         modifier = Modifier
                             .size(40.dp)
+                            .remoteFocusOutline()
                             .clip(RoundedCornerShape(10.dp))
+                            .remoteFocusOutline()
                             .clickable { playerConnection.player.toggleRepeatMode() },
                         contentAlignment = Alignment.Center
                     ) {
@@ -1608,6 +1687,7 @@ fun PlayerPlaybackControls(
                     color = Color.Transparent,
                     modifier = Modifier
                         .size(64.dp)
+                        .remoteFocusOutline()
                         .glassControl(CircleShape, Color.White.copy(alpha = 0.08f))
                 ) {
                     Box(
@@ -1638,6 +1718,7 @@ fun PlayerPlaybackControls(
                     color = Color.Transparent,
                     modifier = Modifier
                         .size(72.dp)
+                        .remoteFocusOutline()
                         .glassControl(CircleShape, Color.White.copy(alpha = 0.16f))
                 ) {
                     Box(
@@ -1673,6 +1754,7 @@ fun PlayerPlaybackControls(
                     color = Color.Transparent,
                     modifier = Modifier
                         .size(64.dp)
+                        .remoteFocusOutline()
                         .glassControl(CircleShape, Color.White.copy(alpha = 0.08f))
                 ) {
                     Box(

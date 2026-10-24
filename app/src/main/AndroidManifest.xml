@@ -32,6 +32,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="false"
         android:fullBackupContent="@xml/backup_rules"
+        android:banner="@drawable/tv_banner"
         android:icon="@drawable/vlc_music_logo"
         android:roundIcon="@drawable/vlc_music_logo"
         android:label="@string/app_name"
@@ -49,6 +50,12 @@
             android:launchMode="singleTask"
             android:theme="@style/Theme.LyraMusic"
             android:windowSoftInputMode="adjustResize">
+            <!-- Android voice assistants can target this standard media-search action. -->
+            <intent-filter>
+                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
