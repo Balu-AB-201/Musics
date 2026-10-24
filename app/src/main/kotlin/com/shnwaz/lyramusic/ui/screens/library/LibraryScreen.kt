@@ -41,6 +41,7 @@ import androidx.compose.foundation.shape.CircleShape
 import com.shnwaz.lyramusic.ui.component.Icon
 import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
 import com.shnwaz.lyramusic.ui.component.glassBubble
+import com.shnwaz.lyramusic.ui.component.tvFocus
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -447,6 +448,7 @@ private fun PlaylistTagFilterChip(
                     scaleX = scale
                     scaleY = scale
                 }.heightIn(min = 48.dp)
+                .tvFocus(CircleShape)
                 .glassBubble(
                     shape = CircleShape,
                     tint = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.50f)
@@ -545,7 +547,8 @@ fun ExpressiveTabChip(
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
-                }.glassBubble(
+                }.tvFocus(CircleShape)
+                .glassBubble(
                     shape = CircleShape,
                     tint = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.50f)
                     else Color.White.copy(alpha = 0.08f),
