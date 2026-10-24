@@ -115,6 +115,7 @@ fun <E> ChipsRow(
             Box(
                 modifier = Modifier
                     .scale(scale)
+                    .tvFocus(CircleShape)
                     .glassBubble(
                         shape = CircleShape,
                         tint = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.50f)

@@ -98,6 +98,7 @@ fun PreferenceEntry(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
+                .tvFocus(RoundedCornerShape(16.dp))
                 .clickable(
                     interactionSource = interactionSource,
                     indication = if (inGroup) LocalIndication.current else null,

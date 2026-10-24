@@ -192,6 +192,7 @@ private fun FloatingToolbarOverflowAction(
             onClick = { fabMenuExpanded = !fabMenuExpanded },
             modifier = Modifier
                 .size(48.dp)
+                .tvFocus(CircleShape)
                 .toolbarGlass(
                     liquidGlass = liquidGlass,
                     tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.50f),
@@ -310,6 +311,7 @@ private fun FloatingToolbarFabAction(
         onClick = onClick,
         modifier = Modifier
             .size(48.dp)
+            .tvFocus(CircleShape)
             .toolbarGlass(
                 liquidGlass = liquidGlass,
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.50f),
@@ -387,6 +389,7 @@ private fun FloatingNavigationToolbarItem(
             Modifier
                 .scale(scale)
                 .size(48.dp)
+                .tvFocus(CircleShape)
                 .then(selectedGlass)
                 .clip(CircleShape)
                 .background(color = containerColor, shape = CircleShape)

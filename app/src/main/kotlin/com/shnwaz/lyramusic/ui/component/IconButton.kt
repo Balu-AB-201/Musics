@@ -76,6 +76,7 @@ fun IconButton(
 ) {
     Box(
         modifier = modifier
+            .tvFocus(CircleShape)
             .minimumInteractiveComponentSize()
             .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
             .glassBubble(CircleShape)

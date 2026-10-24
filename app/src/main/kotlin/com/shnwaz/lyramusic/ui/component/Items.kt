@@ -140,7 +140,9 @@ inline fun ListItem(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = Modifier
+            .tvFocus(RoundedCornerShape(12.dp))
+            .then(modifier)
             .height(ListItemHeight)
             .padding(horizontal = 8.dp)
             .then(if (isActive) Modifier.clip(RoundedCornerShape(8.dp)).background(MaterialTheme.colorScheme.secondaryContainer) else Modifier)
@@ -192,13 +194,14 @@ fun GridItem(
     thumbnailRatio: Float = 1f,
     fillMaxWidth: Boolean = false,
 ) {
+    val tvFocusModifier = Modifier.tvFocus(RoundedCornerShape(16.dp)).then(modifier)
     Column(
         modifier = if (fillMaxWidth) {
-            modifier
+            tvFocusModifier
                 .padding(12.dp)
                 .fillMaxWidth()
         } else {
-            modifier
+            tvFocusModifier
                 .padding(12.dp)
                 .width(GridThumbnailHeight * thumbnailRatio)
         }
