@@ -107,6 +107,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
@@ -213,6 +214,8 @@ import com.shnwaz.lyramusic.ui.component.EXPANDED_ANCHOR
 import com.shnwaz.lyramusic.ui.component.FloatingNavigationToolbar
 import com.shnwaz.lyramusic.ui.component.LocalBackdrop
 import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
+import com.shnwaz.lyramusic.ui.component.LocalIsTv
+import com.shnwaz.lyramusic.ui.component.isTelevision
 import com.shnwaz.lyramusic.ui.component.GlassTheme
 import com.shnwaz.lyramusic.ui.component.GlassThemeKey
 import com.shnwaz.lyramusic.ui.component.layerBackdrop
@@ -492,6 +495,8 @@ class MainActivity : ComponentActivity() {
             // bottom sheet to not appear and overlay interactions to be blocked).
             val bottomSheetPageState = remember { BottomSheetPageState() }
             val (liquidGlassNavBar) = rememberPreference(LiquidGlassNavBarKey, defaultValue = false)
+            val tvContext = LocalContext.current
+            val isTv = remember { isTelevision(tvContext) }
             val menuState = remember { MenuState() }
             val uriHandler = LocalUriHandler.current
             val releaseNotesState = remember { mutableStateOf<String?>(null) }
@@ -1109,6 +1114,7 @@ class MainActivity : ComponentActivity() {
                     CompositionLocalProvider(
                         LocalBackdrop provides (if (liquidGlassNavBar && glassTheme == GlassTheme.LIQUID) glassBackdrop else null),
                         LocalLiquidGlassEnabled provides liquidGlassNavBar,
+                        LocalIsTv provides isTv,
                         LocalDatabase provides database,
                         LocalContentColor provides if (pureBlack) Color.White else contentColorFor(MaterialTheme.colorScheme.surface),
                         LocalPlayerConnection provides playerConnection,
@@ -1608,7 +1614,17 @@ class MainActivity : ComponentActivity() {
                                     .fillMaxSize()
                                     .nestedScroll(searchBarScrollBehavior.nestedScrollConnection)
                             ) {
-                            Box(modifier = Modifier.fillMaxSize().layerBackdrop(glassBackdrop)) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .then(
+                                        if (liquidGlassNavBar && glassTheme == GlassTheme.LIQUID) {
+                                            Modifier.layerBackdrop(glassBackdrop)
+                                        } else {
+                                            Modifier
+                                        }
+                                    )
+                            ) {
                                 NavHost(
                                     navController = navController,
                                     startDestination = when (tabOpenedFromShortcut ?: defaultOpenTab) {
