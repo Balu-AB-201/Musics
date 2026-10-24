@@ -38,6 +38,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
@@ -52,6 +53,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import com.shnwaz.lyramusic.ui.component.Icon
 import com.shnwaz.lyramusic.ui.component.LocalPlayerBackdrop
+import com.shnwaz.lyramusic.ui.component.LocalLiquidGlassEnabled
 import com.shnwaz.lyramusic.ui.component.layerBackdrop
 import com.shnwaz.lyramusic.ui.component.rememberGlassBackdrop
 import androidx.compose.runtime.CompositionLocalProvider
@@ -711,7 +713,7 @@ fun BottomSheetPlayer(
     ) {
         val playerBackdrop = rememberGlassBackdrop()
         CompositionLocalProvider(
-            LocalPlayerBackdrop provides (if (playerDesignStyle == PlayerDesignStyle.V7) playerBackdrop else null)
+            LocalPlayerBackdrop provides (if (playerDesignStyle == PlayerDesignStyle.V7 && LocalLiquidGlassEnabled.current) playerBackdrop else null)
         ) {
         val onSliderValueChange: (Long) -> Unit = {
             isUserSeeking = true
@@ -891,10 +893,11 @@ fun BottomSheetPlayer(
                             .fillMaxSize(),
                     ) {
                         V7PlayerBackdrop(
-                            modifier = Modifier.layerBackdrop(playerBackdrop),
-                            thumbnailUrl = mediaMetadata?.thumbnailUrl,
+                            modifier = if (LocalLiquidGlassEnabled.current) Modifier.layerBackdrop(playerBackdrop) else Modifier,
+                            thumbnailUrl = mediaMetadata?.thumbnailUrl.highQualityThumbnailUrlOrNull(),
                             disableBlur = disableBlur,
                             label = "v7BackdropLandscape",
+                            squareArtwork = false,
                         )
 
                         Column(
@@ -1036,8 +1039,8 @@ fun BottomSheetPlayer(
                             .fillMaxSize(),
                     ) {
                         V7PlayerBackdrop(
-                            modifier = Modifier.layerBackdrop(playerBackdrop),
-                            thumbnailUrl = mediaMetadata?.thumbnailUrl,
+                            modifier = if (LocalLiquidGlassEnabled.current) Modifier.layerBackdrop(playerBackdrop) else Modifier,
+                            thumbnailUrl = mediaMetadata?.thumbnailUrl.highQualityThumbnailUrlOrNull(),
                             disableBlur = disableBlur,
                             label = "v7BackdropPortrait",
                         )
@@ -1156,6 +1159,7 @@ private fun V7PlayerBackdrop(
     disableBlur: Boolean,
     label: String,
     modifier: Modifier = Modifier,
+    squareArtwork: Boolean = true,
 ) {
     val cloudyRadius = 100
     val blurMaskStart = (1f - V7BackdropBlurHeightFraction).coerceIn(0f, 0.85f)
@@ -1177,6 +1181,49 @@ private fun V7PlayerBackdrop(
         ) { artworkUrl ->
             if (artworkUrl != null) {
                 Box(modifier = Modifier.fillMaxSize()) {
+                    if (squareArtwork) {
+                        // 1. Soft full-screen background: zoomed on purpose, but blurred
+                        AsyncImage(
+                            model = artworkUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .then(if (disableBlur) Modifier else Modifier.cloudy(radius = cloudyRadius))
+                                .graphicsLayer {
+                                    scaleX = 1.15f
+                                    scaleY = 1.15f
+                                    alpha = if (disableBlur) 0.70f else 0.90f
+                                }
+                        )
+                        // 2. Sharp artwork in its natural square shape, fitted to the screen
+                        //    width (no stretching) and fading into the background
+                        AsyncImage(
+                            model = artworkUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .graphicsLayer {
+                                    compositingStrategy = CompositingStrategy.Offscreen
+                                }
+                                .drawWithCache {
+                                    val fade = Brush.verticalGradient(
+                                        colorStops = arrayOf(
+                                            0f to Color.Black,
+                                            0.60f to Color.Black,
+                                            1f to Color.Transparent,
+                                        )
+                                    )
+                                    onDrawWithContent {
+                                        drawContent()
+                                        drawRect(brush = fade, blendMode = BlendMode.DstIn)
+                                    }
+                                }
+                        )
+                    } else {
                     AsyncImage(
                         model = artworkUrl,
                         contentDescription = null,
@@ -1222,6 +1269,7 @@ private fun V7PlayerBackdrop(
                                 }
                         )
                     }
+                                    }
                 }
             } else {
                 Box(
