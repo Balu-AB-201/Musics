@@ -127,6 +127,7 @@ fun <E> ChipsRow(
                         indication = androidx.compose.foundation.LocalIndication.current,
                         onClick = { onValueUpdate(value) }
                     )
+                    .remoteFocusOutline(CircleShape)
                     .padding(horizontal = 16.dp, vertical = 9.dp),
                 contentAlignment = Alignment.Center
             ) {
