@@ -140,7 +140,9 @@ inline fun ListItem(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = Modifier
+            .remoteFocusOutline(RoundedCornerShape(8.dp))
+            .then(modifier)
             .height(ListItemHeight)
             .padding(horizontal = 8.dp)
             .then(if (isActive) Modifier.clip(RoundedCornerShape(8.dp)).background(MaterialTheme.colorScheme.secondaryContainer) else Modifier)
@@ -194,11 +196,15 @@ fun GridItem(
 ) {
     Column(
         modifier = if (fillMaxWidth) {
-            modifier
+            Modifier
+                .remoteFocusOutline(RoundedCornerShape(12.dp))
+                .then(modifier)
                 .padding(12.dp)
                 .fillMaxWidth()
         } else {
-            modifier
+            Modifier
+                .remoteFocusOutline(RoundedCornerShape(12.dp))
+                .then(modifier)
                 .padding(12.dp)
                 .width(GridThumbnailHeight * thumbnailRatio)
         }
