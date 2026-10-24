@@ -98,6 +98,10 @@ private fun Material3SettingsItemRow(
                     enabled = item.onClick != null,
                     onClick = { item.onClick?.invoke() }
                 )
+                .then(
+                    if (item.onClick != null) Modifier.remoteFocusOutline(RoundedCornerShape(12.dp))
+                    else Modifier
+                )
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
