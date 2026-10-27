@@ -1295,12 +1295,16 @@ class MusicService :
             }
 
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-
+                // Calls and other interruptions can arrive as a duck request on some
+                // devices. Pause instead of merely lowering volume, and resume only
+                // if playback was active before the interruption.
                 hasAudioFocus = false
-
+                audioFocusVolumeFactor.value = 1f
                 wasPlayingBeforeAudioFocusLoss = player.isPlaying
 
-                audioFocusVolumeFactor.value = 0.2f
+                if (player.isPlaying) {
+                    player.pause()
+                }
 
                 lastAudioFocusState = focusChange
             }
